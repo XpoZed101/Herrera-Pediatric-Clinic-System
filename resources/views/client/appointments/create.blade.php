@@ -1,11 +1,11 @@
-<x-layouts.app :title="__('Book Appointment')">
+<x-layouts.app :title="__('Appointments')">
     <div id="appointments-page" class="px-4 py-6" 
          data-status="{{ session('status') }}" 
          data-error="{{ $errors->first('appointment') }}">
         <div class="rounded-2xl bg-gradient-to-br from-sky-50 to-white dark:from-zinc-800 dark:to-zinc-900 border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
                 <div>
-                    <h1 class="text-2xl font-semibold tracking-tight mb-1">{{ __('Book a Pediatric Visit') }}</h1>
+                    <h1 class="text-2xl font-semibold tracking-tight mb-1">{{ __('Book, reschedule, or cancel appointments online') }}</h1>
                     <p class="text-neutral-600 dark:text-neutral-300">{{ __('Tell us what’s going on. We’ll match you with the right care at the right time.') }}</p>
                 </div>
                 <div class="relative">
@@ -74,7 +74,7 @@
             </script>
         @endif
 
-        @php($blocked = $currentAppointment && ($currentAppointment->status ?? 'requested') !== 'completed')
+        @php($blocked = $currentAppointment && in_array(($currentAppointment->status ?? 'requested'), ['requested','scheduled']))
         @if($blocked)
             <div class="rounded-xl border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-800 p-4 mb-4">
                 <div class="flex items-start gap-3">

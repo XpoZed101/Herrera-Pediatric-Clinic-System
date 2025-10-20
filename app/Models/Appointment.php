@@ -17,31 +17,31 @@ class Appointment extends Model
         'reason',
         'status',
         'notes',
-        // symptoms
-        'fever',
-        'cough',
-        'rash',
-        'ear_pain',
-        'stomach_pain',
-        'diarrhea',
-        'vomiting',
-        'headaches',
-        'trouble_breathing',
-        'symptom_other',
+        // symptom flags
+        'has_fever',
+        'has_cough',
+        'has_vomiting',
+        'has_diarrhea',
+        'has_rash',
+        'has_diff_breathing',
+        'has_dehydration',
+        'has_pain',
+        'reschedule_count',
     ];
 
     protected $casts = [
         'scheduled_at' => 'datetime',
-        'fever' => 'boolean',
-        'cough' => 'boolean',
-        'rash' => 'boolean',
-        'ear_pain' => 'boolean',
-        'stomach_pain' => 'boolean',
-        'diarrhea' => 'boolean',
-        'vomiting' => 'boolean',
-        'headaches' => 'boolean',
-        'trouble_breathing' => 'boolean',
+        'has_fever' => 'boolean',
+        'has_cough' => 'boolean',
+        'has_vomiting' => 'boolean',
+        'has_diarrhea' => 'boolean',
+        'has_rash' => 'boolean',
+        'has_diff_breathing' => 'boolean',
+        'has_dehydration' => 'boolean',
+        'has_pain' => 'boolean',
+        'reschedule_count' => 'integer',
     ];
+
 
     public function patient()
     {

@@ -140,4 +140,80 @@ class AppointmentController extends Controller
             ->route('client.appointments.create')
             ->with('status', __('Appointment requested successfully. We’ll notify you soon.'));
     }
+
+    public function rescheduleForm(Appointment $appointment): View|RedirectResponse
+    {
+        abort_unless(Auth::check() && $appointment->user_id === Auth::id(), 403);
+
+        // Enforce one-time reschedule
+        if (($appointment->reschedule_count ?? 0) >= 1) {
+            return redirect()->route('client.appointments.create')
+                ->withErrors(['appointment' => __('You can reschedule only once.')]);
+        }
+
+        return view('client.appointments.reschedule', [
+            'appointment' => $appointment,
+        ]);
+    }
+
+    public function rescheduleUpdate(\Illuminate\Http\Request $request, Appointment $appointment): RedirectResponse
+    {
+        abort_unless(Auth::check() && $appointment->user_id === Auth::id(), 403);
+
+        if (in_array($appointment->status, ['completed', 'cancelled'])) {
+            return back()->withErrors(['appointment' => __('This appointment cannot be rescheduled.')]);
+        }
+
+        // Enforce one-time reschedule
+        if (($appointment->reschedule_count ?? 0) >= 1) {
+            return back()->withErrors(['appointment' => __('You can reschedule only once.')]);
+        }
+
+        $validated = $request->validate([
+            'scheduled_date' => ['required', 'date_format:Y-m-d'],
+            'scheduled_time' => ['required', 'regex:/^(09:00|09:30|10:00|10:30|11:00|11:30|12:00|12:30|13:00|13:30|14:00|14:30|15:00)$/'],
+        ]);
+
+        $scheduledAt = Carbon::createFromFormat('Y-m-d H:i', $validated['scheduled_date'].' '.$validated['scheduled_time']);
+
+        if ($scheduledAt->isPast()) {
+            return back()->withErrors([
+                'scheduled_date' => __('Please choose a future date and time.'),
+            ])->withInput();
+        }
+
+        // avoid conflicts with other scheduled appointments
+        $conflict = Appointment::where('status', 'scheduled')
+            ->whereDate('scheduled_at', $scheduledAt->toDateString())
+            ->whereTime('scheduled_at', $scheduledAt->format('H:i:s'))
+            ->where('id', '!=', $appointment->id)
+            ->exists();
+
+        if ($conflict) {
+            return back()->withErrors(['appointment' => __('Selected time is already booked. Please choose another time.')])->withInput();
+        }
+
+        $appointment->scheduled_at = $scheduledAt;
+        // Reset status back to requested for review
+        $appointment->status = 'requested';
+        // Increment reschedule_count
+        $appointment->reschedule_count = ($appointment->reschedule_count ?? 0) + 1;
+        $appointment->save();
+
+        return redirect()->route('client.appointments.create')->with('status', __('Appointment rescheduled. We’ll confirm soon.'));
+    }
+
+    public function cancel(Appointment $appointment): RedirectResponse
+    {
+        abort_unless(Auth::check() && $appointment->user_id === Auth::id(), 403);
+
+        if (in_array($appointment->status, ['completed', 'cancelled'])) {
+            return back()->withErrors(['appointment' => __('This appointment cannot be cancelled.')]);
+        }
+
+        $appointment->status = 'cancelled';
+        $appointment->save();
+
+        return redirect()->route('client.appointments.create')->with('status', __('Appointment cancelled.'));
+    }
 }

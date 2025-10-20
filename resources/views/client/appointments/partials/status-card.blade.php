@@ -45,9 +45,30 @@
         </div>
 
         @if($appointment->notes)
-            <div class="mt-3">
+            <div class="mt-4">
                 <div class="text-neutral-500 text-sm">Notes</div>
                 <div class="text-sm whitespace-pre-wrap">{{ $appointment->notes }}</div>
+            </div>
+        @endif
+
+        {{-- Actions: Reschedule / Cancel --}}
+        @if(in_array($status, ['requested','scheduled']))
+            <div class="mt-4 flex items-center gap-2">
+                @if(($appointment->reschedule_count ?? 0) < 1)
+                    <a href="{{ route('client.appointments.reschedule', $appointment) }}" class="inline-flex items-center gap-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 px-3 py-1 hover:bg-neutral-200 dark:hover:bg-neutral-700" wire:navigate>
+                        <flux:icon.clock variant="mini" /> {{ __('Reschedule') }}
+                    </a>
+                @else
+                    <span class="inline-flex items-center gap-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 px-3 py-1" title="{{ __('You can reschedule only once.') }}">
+                        <flux:icon.no-symbol variant="mini" /> {{ __('Reschedule limit reached') }}
+                    </span>
+                @endif
+                <form method="POST" action="{{ route('client.appointments.cancel', $appointment) }}" onsubmit="return confirm('{{ __('Are you sure you want to cancel this appointment?') }}')">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-red-600 text-white px-3 py-1 hover:bg-red-700">
+                        <flux:icon.x-mark variant="mini" /> {{ __('Cancel') }}
+                    </button>
+                </form>
             </div>
         @endif
     </div>

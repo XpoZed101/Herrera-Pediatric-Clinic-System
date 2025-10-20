@@ -138,6 +138,11 @@ Route::middleware(['auth'])->prefix('client')->name('client.')->group(function (
     // Availability API for disabling booked times
     Route::get('/appointments/available-times', [AppointmentController::class, 'availableTimes'])->name('appointments.available-times');
 
+    // Client-driven reschedule and cancellation
+    Route::get('/appointments/{appointment}/reschedule', [AppointmentController::class, 'rescheduleForm'])->name('appointments.reschedule')->whereNumber('appointment');
+    Route::put('/appointments/{appointment}/reschedule', [AppointmentController::class, 'rescheduleUpdate'])->name('appointments.reschedule.update')->whereNumber('appointment');
+    Route::post('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel')->whereNumber('appointment');
+
     // Child records
     Route::get('/medical-history', [ClientPatientController::class, 'medicalHistory'])->name('medical-history');
     // Preview page for printable medical history

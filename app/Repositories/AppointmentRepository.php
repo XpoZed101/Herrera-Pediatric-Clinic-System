@@ -43,7 +43,7 @@ class AppointmentRepository
     public function hasNotCompletedForUser(int $userId): bool
     {
         return Appointment::where('user_id', $userId)
-            ->where('status', '!=', 'completed')
+            ->whereIn('status', ['requested', 'scheduled'])
             ->exists();
     }
 }

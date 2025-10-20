@@ -47,7 +47,7 @@ return [
         'secret_key' => env('PAYMONGO_SECRET_API_KEY'),
         // Default to official PayMongo API base for checkout sessions
         'checkout_base_url' => env('PAYMONGO_CHECKOUT_BASE', 'https://api.paymongo.com/v1/checkout_sessions'),
-        // Restrict to methods requested: bank transfer and GCash
-        'allowed_methods' => ['gcash', 'bank_transfer'],
+        // Supported PayMongo Checkout methods (remove unsupported bank_transfer)
+        'allowed_methods' => ['gcash', 'card'],
     ],
 ];

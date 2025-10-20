@@ -137,12 +137,10 @@ class AppointmentController extends Controller
             }
         }
 
-        $this->repository->create($payload);
+        $appointment = $this->repository->create($payload);
 
-        // Redirect directly to create page to show busy success message on the same layout
-        return redirect()
-            ->route('client.appointments.create')
-            ->with('status', __('Appointment requested successfully. We’ll notify you soon.'));
+        // Redirect immediately to payment checkout to require payment upon request
+        return redirect()->route('client.payments.checkout', $appointment);
     }
 
     public function rescheduleForm(Appointment $appointment): View|RedirectResponse

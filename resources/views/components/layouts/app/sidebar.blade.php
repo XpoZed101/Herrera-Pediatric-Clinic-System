@@ -16,6 +16,7 @@
                     @if(auth()->check() && (auth()->user()->role ?? null) !== 'admin')
                         <flux:navlist.item icon="home" :href="route('client.home')" :current="request()->routeIs('client.home')" class="[&_*[data-slot=icon]]:text-sky-600">{{ __('Home') }}</flux:navlist.item>
                         <flux:navlist.item icon="calendar-days" :href="route('client.appointments.create')" :current="request()->routeIs('client.appointments.create')" wire:navigate class="[&_*[data-slot=icon]]:text-emerald-600">{{ __('Appointments') }}</flux:navlist.item>
+                        <flux:navlist.item icon="credit-card" :href="route('client.billing.history')" :current="request()->routeIs('client.billing.history')" wire:navigate class="[&_*[data-slot=icon]]:text-violet-600">{{ __('Billing') }}</flux:navlist.item>
                     @endif
                     @if(auth()->check() && (auth()->user()->role ?? null) === 'admin')
                         <flux:navlist.item icon="layout-grid" :href="route('admin.dashboard')" :current="request()->routeIs('admin.dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>

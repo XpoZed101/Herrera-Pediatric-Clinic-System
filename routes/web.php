@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\DiagnosisController as AdminDiagnosisController;
 use App\Http\Controllers\Admin\PrescriptionController as AdminPrescriptionController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Admin\VisitTypeController as AdminVisitTypeController;
+use App\Http\Controllers\Client\BillingController as ClientBillingController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
@@ -136,6 +137,8 @@ require __DIR__ . '/auth.php';
 // Grouped client routes
 Route::middleware(['auth'])->prefix('client')->name('client.')->group(function () {
     Route::view('/home', 'client.home')->name('home');
+    // Add Billing history route
+    Route::get('/billing', [ClientBillingController::class, 'history'])->name('billing.history');
     // Appointments
     Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
     Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');

@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentControll
 use App\Http\Controllers\Admin\MedicalRecordController as AdminMedicalRecordController;
 use App\Http\Controllers\Admin\DiagnosisController as AdminDiagnosisController;
 use App\Http\Controllers\Admin\PrescriptionController as AdminPrescriptionController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\Admin\VisitTypeController as AdminVisitTypeController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
@@ -124,6 +126,9 @@ Route::middleware(['auth'])->group(function () {
         // Patient consultations
         Route::get('/patients/{patient}/consultations/create', [AdminConsultationController::class, 'create'])->name('patients.consultations.create');
         Route::post('/patients/{patient}/consultations', [AdminConsultationController::class, 'store'])->name('patients.consultations.store');
+
+        // Visit types management
+        Route::resource('/visit-types', AdminVisitTypeController::class);
     });
 });
 
@@ -142,6 +147,11 @@ Route::middleware(['auth'])->prefix('client')->name('client.')->group(function (
     Route::get('/appointments/{appointment}/reschedule', [AppointmentController::class, 'rescheduleForm'])->name('appointments.reschedule')->whereNumber('appointment');
     Route::put('/appointments/{appointment}/reschedule', [AppointmentController::class, 'rescheduleUpdate'])->name('appointments.reschedule.update')->whereNumber('appointment');
     Route::post('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel')->whereNumber('appointment');
+
+    // Payments (PayMongo Checkout)
+    Route::get('/appointments/{appointment}/pay', [PaymentController::class, 'checkout'])->name('payments.checkout')->whereNumber('appointment');
+    Route::get('/payments/{payment}/success', [PaymentController::class, 'success'])->name('payments.success')->whereNumber('payment');
+    Route::get('/payments/{payment}/cancel', [PaymentController::class, 'cancel'])->name('payments.cancel')->whereNumber('payment');
 
     // Child records
     Route::get('/medical-history', [ClientPatientController::class, 'medicalHistory'])->name('medical-history');

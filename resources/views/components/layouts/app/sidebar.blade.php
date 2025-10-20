@@ -25,6 +25,7 @@
                         <flux:navlist.item icon="calendar-days" :href="route('admin.appointments.index')" :current="request()->routeIs('admin.appointments.*')" wire:navigate>{{ __('Appointments') }}</flux:navlist.item>
                         <flux:navlist.item icon="users" :href="route('admin.patients.index')" :current="request()->routeIs('admin.patients.index')" wire:navigate>{{ __('Patients') }}</flux:navlist.item>
                         <flux:navlist.item icon="user-group" :href="route('admin.staff.index')" :current="request()->routeIs('admin.staff.*')" wire:navigate>{{ __('Manage Staff') }}</flux:navlist.item>
+                        <flux:navlist.item icon="rectangle-stack" :href="route('admin.visit-types.index')" :current="request()->routeIs('admin.visit-types.*')" wire:navigate>{{ __('Visit Types') }}</flux:navlist.item>
                     @endif
                 </flux:navlist.group>
 

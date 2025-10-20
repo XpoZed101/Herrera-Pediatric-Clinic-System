@@ -9,5 +9,4 @@
 
 
 @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/alerts.js'])
-@fluxAppearance
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

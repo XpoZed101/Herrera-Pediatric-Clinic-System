@@ -22,10 +22,9 @@
                         <label class="block text-sm font-medium mb-1">Visit Type</label>
                         <select id="visit_type" name="visit_type" class="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-3 py-2" required>
                             <option value="" disabled @selected(!old('visit_type'))>Select a visit type</option>
-                            <option value="well_visit" @selected(old('visit_type') === 'well_visit')>Well Visit</option>
-                            <option value="follow_up" @selected(old('visit_type') === 'follow_up')>Follow Up</option>
-                            <option value="immunization" @selected(old('visit_type') === 'immunization')>Immunization</option>
-                            <option value="consultation" @selected(old('visit_type') === 'consultation')>Consultation</option>
+                            @foreach($visitTypes as $type)
+                                <option value="{{ $type->slug }}" @selected(old('visit_type') === $type->slug)>{{ $type->name }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>

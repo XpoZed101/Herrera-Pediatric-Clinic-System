@@ -8,6 +8,7 @@
             'cancelled' => 'bg-red-50 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-200 dark:border-red-800',
         ][$status] ?? 'bg-neutral-50 text-neutral-800 border-neutral-200 dark:bg-neutral-800 dark:text-neutral-200 dark:border-neutral-700';
         $allStatuses = ['requested','scheduled','completed','cancelled'];
+        $isPaid = method_exists($appointment, 'payments') ? $appointment->payments()->where('status','paid')->exists() : false;
     @endphp
     <div class="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-zinc-900 p-4 mb-6">
         <div class="flex items-center justify-between gap-4 mb-3">
@@ -51,9 +52,19 @@
             </div>
         @endif
 
-        {{-- Actions: Reschedule / Cancel --}}
+        {{-- Actions: Pay / Reschedule / Cancel --}}
         @if(in_array($status, ['requested','scheduled']))
-            <div class="mt-4 flex items-center gap-2">
+            <div class="mt-4 flex items-center gap-2 flex-wrap">
+                @if(!$isPaid)
+                    <a href="{{ route('client.payments.checkout', $appointment) }}" class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 text-white px-3 py-1 hover:bg-emerald-700" wire:navigate>
+                        <flux:icon.credit-card variant="mini" /> {{ __('Pay Online (GCash/Bank)') }}
+                    </a>
+                @else
+                    <span class="inline-flex items-center gap-2 rounded-lg bg-emerald-100 text-emerald-700 px-3 py-1">
+                        <flux:icon.check variant="mini" /> {{ __('Paid') }}
+                    </span>
+                @endif
+
                 @if(($appointment->reschedule_count ?? 0) < 1)
                     <a href="{{ route('client.appointments.reschedule', $appointment) }}" class="inline-flex items-center gap-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 px-3 py-1 hover:bg-neutral-200 dark:hover:bg-neutral-700" wire:navigate>
                         <flux:icon.clock variant="mini" /> {{ __('Reschedule') }}

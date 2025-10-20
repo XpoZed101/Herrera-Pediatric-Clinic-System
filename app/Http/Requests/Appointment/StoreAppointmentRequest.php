@@ -17,7 +17,7 @@ class StoreAppointmentRequest extends FormRequest
         return [
             'scheduled_date' => ['required', 'date', 'after_or_equal:today'],
             'scheduled_time' => ['required', 'date_format:H:i', 'in:09:00,09:30,10:00,10:30,11:00,11:30,12:00,12:30,13:00,13:30,14:00,14:30,15:00'],
-            'visit_type' => ['required', 'in:well_visit,sick_visit,follow_up,immunization,consultation'],
+            'visit_type' => ['required', 'string', 'exists:visit_types,slug'],
             'reason' => ['nullable', 'string', 'max:255'],
             'notes' => ['nullable', 'string'],
 

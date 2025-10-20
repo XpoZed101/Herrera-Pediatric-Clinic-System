@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Appointment\StoreAppointmentRequest;
 use App\Repositories\AppointmentRepository;
 use App\Models\Appointment;
+use App\Models\VisitType;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
@@ -57,8 +58,11 @@ class AppointmentController extends Controller
             ->latest('created_at')
             ->first();
 
+        $visitTypes = VisitType::active()->orderBy('name')->get();
+
         return view('client.appointments.create', [
             'currentAppointment' => $currentAppointment,
+            'visitTypes' => $visitTypes,
         ]);
     }
 

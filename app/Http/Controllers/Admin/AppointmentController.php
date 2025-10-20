@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
+use App\Models\VisitType;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
@@ -37,7 +38,8 @@ class AppointmentController extends Controller
         abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'admin', 403);
 
         $appointment->load(['patient', 'user']);
-        return view('admin.appointments.edit', compact('appointment'));
+        $visitTypes = VisitType::active()->orderBy('name')->get();
+        return view('admin.appointments.edit', compact('appointment', 'visitTypes'));
     }
 
     public function update(Request $request, Appointment $appointment): RedirectResponse
@@ -46,7 +48,7 @@ class AppointmentController extends Controller
 
         $validated = $request->validate([
             'scheduled_at' => ['nullable', 'date'],
-            'visit_type' => ['nullable', 'string', 'max:255'],
+            'visit_type' => ['nullable', 'string', 'exists:visit_types,slug'],
             'reason' => ['nullable', 'string'],
             'notes' => ['nullable', 'string'],
             'status' => ['nullable', 'in:requested,scheduled,completed,cancelled'],

@@ -8,6 +8,7 @@ use App\Models\Patient;
 use App\Models\MedicalRecord;
 use App\Models\Prescription;
 use App\Models\Diagnosis;
+use App\Models\VisitType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -31,9 +32,10 @@ class DashboardController extends Controller
         $statusLabels = ['requested', 'scheduled', 'completed', 'cancelled'];
         $statusCounts = collect($statusLabels)->map(fn ($s) => Appointment::where('status', $s)->count())->all();
 
-        // Visit type distribution (secondary)
-        $visitTypeLabels = ['well_visit', 'sick_visit', 'follow_up', 'immunization', 'consultation'];
-        $visitTypeCounts = collect($visitTypeLabels)->map(fn ($t) => Appointment::where('visit_type', $t)->count())->all();
+        // Visit type distribution (dynamic from VisitType)
+        $types = VisitType::active()->orderBy('name')->get(['slug','name']);
+        $visitTypeLabels = $types->pluck('name')->all();
+        $visitTypeCounts = $types->map(fn ($t) => Appointment::where('visit_type', $t->slug)->count())->all();
 
         return view('admin.dashboard', [
             'stats' => $stats,
@@ -50,9 +52,10 @@ class DashboardController extends Controller
         $statusLabels = ['requested', 'scheduled', 'completed', 'cancelled'];
         $statusCounts = collect($statusLabels)->map(fn ($s) => Appointment::where('status', $s)->count())->all();
 
-        // Visit type distribution for charts
-        $visitTypeLabels = ['well_visit', 'sick_visit', 'follow_up', 'immunization', 'consultation'];
-        $visitTypeCounts = collect($visitTypeLabels)->map(fn ($t) => Appointment::where('visit_type', $t)->count())->all();
+        // Visit type distribution for charts (dynamic from VisitType)
+        $types = VisitType::active()->orderBy('name')->get(['slug','name']);
+        $visitTypeLabels = $types->pluck('name')->all();
+        $visitTypeCounts = $types->map(fn ($t) => Appointment::where('visit_type', $t->slug)->count())->all();
 
         return response()->json([
             'statusLabels' => $statusLabels,

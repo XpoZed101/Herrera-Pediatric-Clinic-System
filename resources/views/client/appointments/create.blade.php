@@ -109,11 +109,10 @@
                     <div>
                         <label class="block text-sm font-medium mb-1" for="visit_type">{{ __('Visit Type') }}</label>
                         <select id="visit_type" name="visit_type" class="w-full rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-800 px-3 py-2" required>
-                            <option value="well_visit">{{ __('Well Visit') }}</option>
-                            <option value="sick_visit">{{ __('Sick Visit') }}</option>
-                            <option value="follow_up">{{ __('Follow Up') }}</option>
-                            <option value="immunization">{{ __('Immunization') }}</option>
-                            <option value="consultation">{{ __('Consultation') }}</option>
+                            <option value="" disabled @selected(!old('visit_type'))>{{ __('Select a visit type') }}</option>
+                            @foreach($visitTypes as $type)
+                                <option value="{{ $type->slug }}" @selected(old('visit_type') === $type->slug)>{{ $type->name }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>

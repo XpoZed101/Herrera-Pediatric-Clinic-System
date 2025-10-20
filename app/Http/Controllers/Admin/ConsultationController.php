@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Patient;
 use App\Models\Consultation;
 use App\Models\Prescription;
+use App\Models\VisitType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,9 +36,12 @@ class ConsultationController extends Controller
             ->limit(50)
             ->get();
 
+        $visitTypes = VisitType::active()->orderBy('name')->get();
+
         return view('admin.consultations.create', [
             'patient' => $patient,
             'prescriptions' => $prescriptions,
+            'visitTypes' => $visitTypes,
         ]);
     }
 
@@ -47,7 +51,7 @@ class ConsultationController extends Controller
 
         $data = $request->validate([
             'conducted_at' => ['nullable', 'date'],
-            'visit_type' => ['nullable', 'string', 'max:255'],
+            'visit_type' => ['nullable', 'string', 'exists:visit_types,slug'],
             'chief_complaint' => ['nullable', 'string'],
             'examination' => ['nullable', 'string'],
             'diagnosis' => ['nullable', 'string'],

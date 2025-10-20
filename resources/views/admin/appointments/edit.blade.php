@@ -27,10 +27,10 @@
                     <label class="block text-sm font-medium mb-1" for="visit_type">Visit Type</label>
                     <select id="visit_type" name="visit_type" class="w-full rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-800 px-3 py-2" required>
                         @php($current = old('visit_type', $appointment->visit_type))
-                        <option value="well_visit" @selected($current === 'well_visit')>Well Visit</option>
-                        <option value="follow_up" @selected($current === 'follow_up')>Follow Up</option>
-                        <option value="immunization" @selected($current === 'immunization')>Immunization</option>
-                        <option value="consultation" @selected($current === 'consultation')>Consultation</option>
+                        <option value="" disabled @selected(!$current)>Select a visit type</option>
+                        @foreach($visitTypes as $type)
+                            <option value="{{ $type->slug }}" @selected($current === $type->slug)>{{ $type->name }}</option>
+                        @endforeach
                     </select>
                 </div>
 

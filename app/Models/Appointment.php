@@ -57,4 +57,9 @@ class Appointment extends Model
     {
         return $this->hasOne(MedicalRecord::class);
     }
+
+    public function payments()
+    {
+        return $this->hasMany(\App\Models\Payment::class);
+    }
 }

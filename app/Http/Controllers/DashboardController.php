@@ -7,6 +7,7 @@ use App\Models\Patient;
 use App\Models\MedicalRecord;
 use App\Models\Prescription;
 use App\Models\Diagnosis;
+use App\Models\VisitType;
 use App\Mail\AppointmentReminderMail;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
@@ -39,11 +40,13 @@ class DashboardController extends Controller
             ->pluck('count', 'status');
         $statusCounts = array_map(fn($s) => (int)($statusCountsMap[$s] ?? 0), $statusLabels);
 
-        $visitTypeLabels = ['well_visit', 'sick_visit', 'follow_up', 'immunization', 'consultation'];
+        // Dynamic visit types
+        $types = VisitType::active()->orderBy('name')->get(['slug','name']);
+        $visitTypeLabels = $types->pluck('name')->all();
         $visitTypeCountsMap = Appointment::selectRaw('visit_type, COUNT(*) as count')
             ->groupBy('visit_type')
             ->pluck('count', 'visit_type');
-        $visitTypeCounts = array_map(fn($t) => (int)($visitTypeCountsMap[$t] ?? 0), $visitTypeLabels);
+        $visitTypeCounts = $types->map(fn($t) => (int)($visitTypeCountsMap[$t->slug] ?? 0))->all();
 
         return view('dashboard', [
             'counts' => $counts,
@@ -53,7 +56,7 @@ class DashboardController extends Controller
             'visitTypeCounts' => $visitTypeCounts,
         ]);
     }
-
+    
     public function sendReminders(Request $request)
     {
         // Find appointments scheduled for the next day (full-day window)

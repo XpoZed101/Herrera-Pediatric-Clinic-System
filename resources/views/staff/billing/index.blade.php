@@ -3,13 +3,28 @@
         <div class="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-zinc-900 p-4">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-semibold">{{ __('Billing & Payments') }}</h2>
-                <div class="flex items-center gap-2">
-                    <a href="{{ route('staff.billing.index', request()->query()) }}" class="inline-flex items-center justify-center rounded-md p-1.5 hover:bg-neutral-200 dark:hover:bg-neutral-700" title="Refresh" wire:navigate>
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('staff.billing.index') }}" class="inline-flex items-center justify-center rounded-md p-1.5 hover:bg-neutral-200 dark:hover:bg-neutral-700" title="Refresh" wire:navigate>
                         <flux:icon.arrow-path variant="mini" />
                     </a>
-                    <a href="{{ route('staff.appointments.index') }}" class="inline-flex items-center gap-2 rounded-lg bg-neutral-900 text-white px-3 py-1 hover:bg-neutral-700" wire:navigate>
-                        <flux:icon.calendar-days variant="mini" /> {{ __('View Appointments') }}
-                    </a>
+                    <form method="GET" action="{{ route('staff.reports.payments.pdf') }}" target="_blank" class="flex items-center gap-2">
+                        <input type="date" name="start" class="rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-2 py-1 text-sm" />
+                        <span class="text-sm text-neutral-600">to</span>
+                        <input type="date" name="end" class="rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-2 py-1 text-sm" />
+                        <select name="status" class="rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-2 py-1 text-sm">
+                            <option value="">All</option>
+                            <option value="pending">Pending</option>
+                            <option value="paid">Paid</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                        <select name="date_field" class="rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-2 py-1 text-sm">
+                            <option value="created_at">Created</option>
+                            <option value="paid_at">Paid</option>
+                        </select>
+                        <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-violet-600 text-white px-3 py-1 hover:bg-violet-700">
+                            <flux:icon.document-text variant="mini" /> {{ __('Generate PDF') }}
+                        </button>
+                    </form>
                 </div>
             </div>
 

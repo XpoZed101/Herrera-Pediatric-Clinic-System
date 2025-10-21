@@ -3,13 +3,18 @@
         <div class="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-zinc-900 p-4">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-semibold">Appointments</h2>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-3">
                     <a href="{{ route('staff.appointments.index') }}" class="inline-flex items-center justify-center rounded-md p-1.5 hover:bg-neutral-200 dark:hover:bg-neutral-700" title="Refresh" wire:navigate>
                         <flux:icon.arrow-path variant="mini" />
                     </a>
-                    <a href="{{ route('staff.patients.create') }}" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 text-white px-3 py-1 hover:bg-blue-700" wire:navigate>
-                        <flux:icon.user-plus variant="mini" /> Register Patient
-                    </a>
+                    <form method="GET" action="{{ route('staff.reports.appointments.pdf') }}" target="_blank" class="flex items-center gap-2">
+                         <input type="date" name="start" class="rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-2 py-1 text-sm" />
+                         <span class="text-sm text-neutral-600">to</span>
+                         <input type="date" name="end" class="rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-2 py-1 text-sm" />
+                         <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 text-white px-3 py-1 hover:bg-blue-700">
+                             <flux:icon.document-text variant="mini" /> {{ __('Generate PDF') }}
+                         </button>
+                     </form>
                 </div>
             </div>
 

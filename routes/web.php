@@ -86,6 +86,10 @@ Route::post('/appointments/{appointment}/email', [\App\Http\Controllers\Staff\Ap
         Route::get('/patients/create', [\App\Http\Controllers\Staff\PatientController::class, 'create'])->name('patients.create');
         Route::post('/patients', [\App\Http\Controllers\Staff\PatientController::class, 'store'])->name('patients.store');
         Route::get('/patients/{patient}', [\App\Http\Controllers\Staff\PatientController::class, 'show'])->name('patients.show')->whereNumber('patient');
+
+        // Reports (PDF)
+        Route::get('/reports/appointments/pdf', [\App\Http\Controllers\Staff\ReportController::class, 'appointmentsPdf'])->name('reports.appointments.pdf');
+        Route::get('/reports/payments/pdf', [\App\Http\Controllers\Staff\ReportController::class, 'paymentsPdf'])->name('reports.payments.pdf');
     });
 
     // Grouped admin routes

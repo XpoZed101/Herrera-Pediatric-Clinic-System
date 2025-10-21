@@ -18,7 +18,7 @@ class BillingController extends Controller
         abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'staff', 403);
 
         $status = request('status');
-        $query = Payment::with(['appointment', 'user']);
+        $query = Payment::with(['appointment.patient', 'user']);
         if (in_array($status, ['paid', 'pending', 'cancelled'])) {
             $query->where('status', $status);
         }
@@ -42,7 +42,7 @@ class BillingController extends Controller
     {
         abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'staff', 403);
 
-        $payment->load(['appointment.user']);
+        $payment->load(['appointment.user', 'appointment.patient']);
         return view('staff.billing.show', compact('payment'));
     }
 

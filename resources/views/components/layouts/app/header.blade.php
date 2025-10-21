@@ -141,6 +141,9 @@
 
         {{ $slot }}
 
+        <div id="flash-messages" data-status="{{ session('status') }}" data-status-updated="{{ session('status_updated') }}" data-email-sent="{{ session('email_sent') }}" data-error="{{ session('error') }}" hidden></div>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         @fluxScripts
     </body>
 </html>

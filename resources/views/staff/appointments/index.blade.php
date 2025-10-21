@@ -64,7 +64,7 @@
                                         <a href="{{ route('staff.appointments.show', $appointment) }}" class="inline-flex items-center gap-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 px-3 py-1 hover:bg-neutral-200 dark:hover:bg-neutral-700" wire:navigate>
                                             <flux:icon.eye variant="mini" /> View
                                         </a>
-                                        <form method="POST" action="{{ route('staff.appointments.update-status', $appointment) }}" class="inline-flex items-center gap-2">
+                                        <form method="POST" action="{{ route('staff.appointments.update-status', $appointment) }}" class="inline-flex items-center gap-2 js-confirm" data-confirm-title="Update status?" data-confirm-text="This will change the appointment status." data-confirm-submit-text="Yes, update">
                                             @csrf
                                             @php $current = $appointment->status ?? 'requested'; @endphp
                                             <select name="status" class="rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 text-sm px-2 py-1">
@@ -77,22 +77,21 @@
                                                 <flux:icon.arrow-path variant="mini" /> Update
                                             </button>
                                         </form>
-                                        <form method="POST" action="{{ route('staff.appointments.email', $appointment) }}" class="inline">
+                                        <form method="POST" action="{{ route('staff.appointments.email', $appointment) }}" class="inline js-confirm" data-confirm-title="Send email?" data-confirm-text="Notify patient about this appointment." data-confirm-submit-text="Send">
                                             @csrf
                                             <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-purple-600 text-white px-3 py-1 hover:bg-purple-700">
                                                 Email
                                             </button>
                                         </form>
                                         @if(!$appointment->checked_in_at)
-                                            <form method="POST" action="{{ route('staff.appointments.check-in', $appointment) }}" class="inline">
+                                            <form method="POST" action="{{ route('staff.appointments.check-in', $appointment) }}" class="inline js-confirm" data-confirm-title="Check in patient?" data-confirm-text="Mark this appointment as checked in." data-confirm-submit-text="Check in">
                                                 @csrf
                                                 <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 text-white px-3 py-1 hover:bg-emerald-700">
                                                     <flux:icon.check variant="mini" /> Check In
                                                 </button>
                                             </form>
-                                        @endif
-                                        @if(!$appointment->checked_out_at)
-                                            <form method="POST" action="{{ route('staff.appointments.check-out', $appointment) }}" class="inline">
+                                        @elseif(!$appointment->checked_out_at)
+                                            <form method="POST" action="{{ route('staff.appointments.check-out', $appointment) }}" class="inline js-confirm" data-confirm-title="Check out patient?" data-confirm-text="Mark this appointment as checked out." data-confirm-submit-text="Check out">
                                                 @csrf
                                                 <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 text-white px-3 py-1 hover:bg-indigo-700">
                                                     <flux:icon.arrow-right-start-on-rectangle variant="mini" /> Check Out

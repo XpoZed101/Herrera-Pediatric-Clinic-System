@@ -54,7 +54,7 @@
                     @if($payment->status !== 'paid')
                         <div class="rounded-lg border border-neutral-200 dark:border-neutral-700 p-4">
                             <div class="text-sm font-medium mb-2">{{ __('Process Payment') }}</div>
-                            <form x-data="{ method: '{{ $payment->payment_method ?? 'cash' }}' }" method="POST" action="{{ route('staff.billing.payments.mark-paid', $payment) }}" class="flex flex-col gap-3">
+                            <form x-data="{ method: '{{ $payment->payment_method ?? 'cash' }}' }" method="POST" action="{{ route('staff.billing.payments.mark-paid', $payment) }}" class="flex flex-col gap-3 js-confirm" data-confirm-title="Mark payment as paid?" data-confirm-text="Record this payment as settled." data-confirm-submit-text="Yes, mark paid">
                                 @csrf
                                 <div>
                                     <label class="text-xs text-neutral-600 dark:text-neutral-300">{{ __('Payment Method') }}</label>

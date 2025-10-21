@@ -54,15 +54,14 @@
 
             <div class="mt-4 flex items-center gap-3">
                 @if(!$appointment->checked_in_at)
-                    <form method="POST" action="{{ route('staff.appointments.check-in', $appointment) }}" class="inline-flex items-center gap-2">
+                    <form method="POST" action="{{ route('staff.appointments.check-in', $appointment) }}" class="inline-flex items-center gap-2 js-confirm" data-confirm-title="Check in patient?" data-confirm-text="Mark this appointment as checked in." data-confirm-submit-text="Check in">
                         @csrf
                         <button type="submit" class="inline-flex items-center gap-1 rounded-lg bg-emerald-600 text-white px-3 py-1 hover:bg-emerald-700">
                             <flux:icon.check variant="mini" /> Check In
                         </button>
                     </form>
-                @endif
-                @if(!$appointment->checked_out_at)
-                    <form method="POST" action="{{ route('staff.appointments.check-out', $appointment) }}" class="inline-flex items-center gap-2">
+                @elseif(!$appointment->checked_out_at)
+                    <form method="POST" action="{{ route('staff.appointments.check-out', $appointment) }}" class="inline-flex items-center gap-2 js-confirm" data-confirm-title="Check out patient?" data-confirm-text="Mark this appointment as checked out." data-confirm-submit-text="Check out">
                         @csrf
                         <button type="submit" class="inline-flex items-center gap-1 rounded-lg bg-indigo-600 text-white px-3 py-1 hover:bg-indigo-700">
                             <flux:icon.arrow-right-start-on-rectangle variant="mini" /> Check Out

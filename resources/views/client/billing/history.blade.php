@@ -77,9 +77,11 @@
                         </div>
                         <div class="flex items-center gap-2">
                             @if(($payment->status ?? '') === 'pending' && $payment->appointment)
-                                <a href="{{ route('client.payments.checkout', $payment->appointment) }}" class="inline-flex items-center gap-2 rounded-lg bg-accent text-white px-3 py-1 hover:opacity-90" wire:navigate>
-                                    <flux:icon.credit-card variant="mini" /> {{ __('Pay Now') }}
-                                </a>
+                                <form method="GET" action="{{ route('client.payments.checkout', $payment->appointment) }}" class="inline">
+                                    <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-accent text-white px-3 py-1 hover:opacity-90">
+                                        <flux:icon.credit-card variant="mini" /> {{ __('Pay Now') }}
+                                    </button>
+                                </form>
                             @elseif(($payment->status ?? '') === 'paid')
                                 <span class="inline-flex items-center gap-2 rounded-lg bg-emerald-100 text-emerald-700 px-3 py-1">
                                     <flux:icon.check variant="mini" /> {{ __('Paid') }}

@@ -56,9 +56,11 @@
         @if(in_array($status, ['requested','scheduled']))
             <div class="mt-4 flex items-center gap-2 flex-wrap">
                 @if(!$isPaid)
-                    <a href="{{ route('client.payments.checkout', $appointment) }}" class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 text-white px-3 py-1 hover:bg-emerald-700">
-                        <flux:icon.credit-card variant="mini" /> {{ __('Pay Online (GCash/Bank)') }}
-                    </a>
+                    <form method="GET" action="{{ route('client.payments.checkout', $appointment) }}" class="inline">
+                        <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 text-white px-3 py-1 hover:bg-emerald-700">
+                            <flux:icon.credit-card variant="mini" /> {{ __('Pay Online (GCash/Bank)') }}
+                        </button>
+                    </form>
                 @else
                     <span class="inline-flex items-center gap-2 rounded-lg bg-emerald-100 text-emerald-700 px-3 py-1">
                         <flux:icon.check variant="mini" /> {{ __('Paid') }}
@@ -67,16 +69,13 @@
 
                 @if(($appointment->reschedule_count ?? 0) < 1)
                     <a href="{{ route('client.appointments.reschedule', $appointment) }}" class="inline-flex items-center gap-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 px-3 py-1 hover:bg-neutral-200 dark:hover:bg-neutral-700" wire:navigate>
-                        <flux:icon.clock variant="mini" /> {{ __('Reschedule') }}
+                        <flux:icon.arrow-path variant="mini" /> {{ __('Reschedule') }}
                     </a>
-                @else
-                    <span class="inline-flex items-center gap-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 px-3 py-1" title="{{ __('You can reschedule only once.') }}">
-                        <flux:icon.no-symbol variant="mini" /> {{ __('Reschedule limit reached') }}
-                    </span>
                 @endif
-                <form method="POST" action="{{ route('client.appointments.cancel', $appointment) }}" onsubmit="return confirm('{{ __('Are you sure you want to cancel this appointment?') }}')">
+
+                <form method="POST" action="{{ route('client.appointments.cancel', $appointment) }}" class="inline">
                     @csrf
-                    <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-red-600 text-white px-3 py-1 hover:bg-red-700">
+                    <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-rose-600 text-white px-3 py-1 hover:bg-rose-700">
                         <flux:icon.x-mark variant="mini" /> {{ __('Cancel') }}
                     </button>
                 </form>

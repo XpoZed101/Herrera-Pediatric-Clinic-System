@@ -73,6 +73,12 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/appointments/{appointment}/check-in', [\App\Http\Controllers\Staff\AppointmentController::class, 'checkIn'])->name('appointments.check-in')->whereNumber('appointment');
         Route::post('/appointments/{appointment}/check-out', [\App\Http\Controllers\Staff\AppointmentController::class, 'checkOut'])->name('appointments.check-out')->whereNumber('appointment');
 
+        // Billing & Payments
+        Route::get('/billing', [\App\Http\Controllers\Staff\BillingController::class, 'index'])->name('billing.index');
+        Route::get('/billing/payments/{payment}', [\App\Http\Controllers\Staff\BillingController::class, 'show'])->name('billing.payments.show')->whereNumber('payment');
+        Route::post('/billing/payments/{payment}/mark-paid', [\App\Http\Controllers\Staff\BillingController::class, 'markPaid'])->name('billing.payments.mark-paid')->whereNumber('payment');
+        Route::post('/billing/appointments/{appointment}/create-payment', [\App\Http\Controllers\Staff\BillingController::class, 'createPayment'])->name('billing.appointments.create-payment')->whereNumber('appointment');
+
         // Patient registration and handling
         Route::get('/patients', [\App\Http\Controllers\Staff\PatientController::class, 'index'])->name('patients.index');
         Route::get('/patients/create', [\App\Http\Controllers\Staff\PatientController::class, 'create'])->name('patients.create');

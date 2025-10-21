@@ -21,17 +21,34 @@ class PaymentController extends Controller
         $type = VisitType::where('slug', $appointment->visit_type)->first();
         $amount = $type ? (int) $type->amount_cents : 1000 * 100; // centavos
 
-        $payment = Payment::create([
-            'user_id' => $appointment->user_id,
-            'appointment_id' => $appointment->id,
-            'amount' => $amount,
-            'currency' => 'PHP',
-            'status' => 'pending',
-            'provider' => 'paymongo',
-            'metadata' => [
-                'appointment_visit_type' => $appointment->visit_type,
-            ],
-        ]);
+        // Reuse existing pending payment if present (created automatically or previously)
+        $payment = Payment::where('appointment_id', $appointment->id)
+            ->where('status', 'pending')
+            ->latest()
+            ->first();
+
+        if ($payment) {
+            $payment->update([
+                'amount' => $amount,
+                'currency' => 'PHP',
+                'provider' => 'paymongo',
+                'metadata' => array_merge($payment->metadata ?? [], [
+                    'appointment_visit_type' => $appointment->visit_type,
+                ]),
+            ]);
+        } else {
+            $payment = Payment::create([
+                'user_id' => $appointment->user_id,
+                'appointment_id' => $appointment->id,
+                'amount' => $amount,
+                'currency' => 'PHP',
+                'status' => 'pending',
+                'provider' => 'paymongo',
+                'metadata' => [
+                    'appointment_visit_type' => $appointment->visit_type,
+                ],
+            ]);
+        }
 
         $successUrl = URL::route('client.payments.success', $payment);
         $cancelUrl = URL::route('client.payments.cancel', $payment);

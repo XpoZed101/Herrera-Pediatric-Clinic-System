@@ -13,6 +13,7 @@ class Payment extends Model
         'amount',
         'currency',
         'payment_method',
+        'reference',
         'status',
         'provider',
         'provider_session_id',

@@ -17,7 +17,7 @@
                     <select id="appointment_id" name="appointment_id" class="w-full rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-800 px-3 py-2">
                         @foreach($appointments as $appt)
                              <option value="{{ $appt->id }}">
-                                #{{ $appt->id }} — {{ optional($appt->patient)->child_name ?? 'Unknown Patient' }} — {{ optional($appt->scheduled_at)->format('Y-m-d H:i') }}
+                                #{{ $appt->id }} — {{ optional($appt->user)->name ?? 'Unknown User' }} — {{ optional($appt->scheduled_at)->format('Y-m-d H:i') }}
                             </option>
                         @endforeach
                     </select>

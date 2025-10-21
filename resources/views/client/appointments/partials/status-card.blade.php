@@ -56,7 +56,7 @@
         @if(in_array($status, ['requested','scheduled']))
             <div class="mt-4 flex items-center gap-2 flex-wrap">
                 @if(!$isPaid)
-                    <a href="{{ route('client.payments.checkout', $appointment) }}" class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 text-white px-3 py-1 hover:bg-emerald-700" wire:navigate>
+                    <a href="{{ route('client.payments.checkout', $appointment) }}" class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 text-white px-3 py-1 hover:bg-emerald-700">
                         <flux:icon.credit-card variant="mini" /> {{ __('Pay Online (GCash/Bank)') }}
                     </a>
                 @else

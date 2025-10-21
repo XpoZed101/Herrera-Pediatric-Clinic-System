@@ -139,8 +139,9 @@ class AppointmentController extends Controller
 
         $appointment = $this->repository->create($payload);
 
-        // Redirect immediately to payment checkout to require payment upon request
-        return redirect()->route('client.payments.checkout', $appointment);
+        // Redirect back to create page without forcing online payment
+        return redirect()->route('client.appointments.create')
+            ->with('status', __('Appointment requested. We’ll confirm soon. Online payment is optional.'));
     }
 
     public function rescheduleForm(Appointment $appointment): View|RedirectResponse

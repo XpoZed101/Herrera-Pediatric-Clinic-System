@@ -90,6 +90,14 @@ Route::post('/appointments/{appointment}/email', [\App\Http\Controllers\Staff\Ap
         // Reports (PDF)
         Route::get('/reports/appointments/pdf', [\App\Http\Controllers\Staff\ReportController::class, 'appointmentsPdf'])->name('reports.appointments.pdf');
         Route::get('/reports/payments/pdf', [\App\Http\Controllers\Staff\ReportController::class, 'paymentsPdf'])->name('reports.payments.pdf');
+
+        // Phone Inquiries
+        Route::get('/phone-inquiries', [\App\Http\Controllers\Staff\PhoneInquiryController::class, 'index'])->name('phone-inquiries.index');
+        Route::get('/phone-inquiries/create', [\App\Http\Controllers\Staff\PhoneInquiryController::class, 'create'])->name('phone-inquiries.create');
+        Route::post('/phone-inquiries', [\App\Http\Controllers\Staff\PhoneInquiryController::class, 'store'])->name('phone-inquiries.store');
+        Route::get('/phone-inquiries/{phoneInquiry}', [\App\Http\Controllers\Staff\PhoneInquiryController::class, 'show'])->name('phone-inquiries.show')->whereNumber('phoneInquiry');
+        Route::post('/phone-inquiries/{phoneInquiry}/status', [\App\Http\Controllers\Staff\PhoneInquiryController::class, 'updateStatus'])->name('phone-inquiries.update-status')->whereNumber('phoneInquiry');
+        Route::post('/phone-inquiries/{phoneInquiry}/convert-to-appointment', [\App\Http\Controllers\Staff\PhoneInquiryController::class, 'convertToAppointment'])->name('phone-inquiries.convert-to-appointment')->whereNumber('phoneInquiry');
     });
 
     // Grouped admin routes

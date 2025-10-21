@@ -42,6 +42,7 @@
                 <flux:navlist.group :heading="__('Child Health')" class="grid mt-2">
                     <flux:navlist.item icon="document-text" :href="route('client.medical-history')" :current="request()->routeIs('client.medical-history')" wire:navigate class="[&_*[data-slot=icon]]:text-rose-600">{{ __('Medical History') }}</flux:navlist.item>
                     <flux:navlist.item icon="phone" :href="route('client.contact-info')" :current="request()->routeIs('client.contact-info')" wire:navigate class="[&_*[data-slot=icon]]:text-indigo-600">{{ __('Contact Info') }}</flux:navlist.item>
+                    <flux:navlist.item icon="calendar-days" :href="route('client.appointments.history')" :current="request()->routeIs('client.appointments.history')" wire:navigate class="[&_*[data-slot=icon]]:text-emerald-600">{{ __('Appointment History') }}</flux:navlist.item>
                 </flux:navlist.group>
                 @endif
 

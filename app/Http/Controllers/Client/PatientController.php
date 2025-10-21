@@ -8,6 +8,7 @@ use App\Models\Guardian;
 use App\Models\Patient;
 use App\Models\EmergencyContact;
 use App\Models\User;
+use App\Models\Appointment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
@@ -246,5 +247,51 @@ class PatientController extends Controller
 
         return redirect()->route('client.contact-info')
             ->with('status', __('Contact information updated.'));
+    }
+
+    public function appointmentHistory(): View
+    {
+        $user = Auth::user();
+        $guardian = null;
+        $patient = null;
+
+        if ($user) {
+            $guardian = Guardian::where('email', $user->email)->first();
+            $patient = $guardian?->patient;
+        }
+
+        $patient = $patient ?? Patient::query()->first();
+
+        $currentAppointments = Appointment::with(['patient'])
+            ->where(function ($q) use ($user, $patient) {
+                if ($patient) {
+                    $q->where('patient_id', $patient->id);
+                }
+                if ($user) {
+                    $q->orWhere('user_id', $user->id);
+                }
+            })
+            ->whereIn('status', ['requested', 'scheduled'])
+            ->where('scheduled_at', '>=', now())
+            ->orderBy('scheduled_at')
+            ->get();
+
+        $pastAppointments = Appointment::with(['patient'])
+            ->where(function ($q) use ($user, $patient) {
+                if ($patient) {
+                    $q->where('patient_id', $patient->id);
+                }
+                if ($user) {
+                    $q->orWhere('user_id', $user->id);
+                }
+            })
+            ->where(function ($q) {
+                $q->where('scheduled_at', '<', now())
+                  ->orWhereIn('status', ['completed', 'cancelled']);
+            })
+            ->orderBy('scheduled_at', 'desc')
+            ->get();
+
+        return view('client.appointment-history', compact('patient', 'currentAppointments', 'pastAppointments'));
     }
 }

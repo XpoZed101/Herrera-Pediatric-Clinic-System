@@ -169,9 +169,7 @@ Route::middleware(['auth'])->prefix('client')->name('client.')->group(function (
     Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
     Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
     Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
-    // Availability API for disabling booked times
     Route::get('/appointments/available-times', [AppointmentController::class, 'availableTimes'])->name('appointments.available-times');
-
     // Client-driven reschedule and cancellation
     Route::get('/appointments/{appointment}/reschedule', [AppointmentController::class, 'rescheduleForm'])->name('appointments.reschedule')->whereNumber('appointment');
     Route::put('/appointments/{appointment}/reschedule', [AppointmentController::class, 'rescheduleUpdate'])->name('appointments.reschedule.update')->whereNumber('appointment');
@@ -189,6 +187,9 @@ Route::middleware(['auth'])->prefix('client')->name('client.')->group(function (
     // PDF download for medical history
     Route::get('/medical-history/pdf', [ClientPatientController::class, 'medicalHistoryPdf'])->name('medical-history.pdf');
     Route::get('/immunizations', [ClientPatientController::class, 'immunizations'])->name('immunizations');
+    
+    // New: Appointment history page
+    Route::get('/appointments/history', [ClientPatientController::class, 'appointmentHistory'])->name('appointments.history');
 
     // Contact information (guardian/contact details)
     Route::get('/contact-info', [ClientPatientController::class, 'contactInfo'])->name('contact-info');

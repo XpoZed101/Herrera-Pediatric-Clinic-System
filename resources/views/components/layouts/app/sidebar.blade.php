@@ -7,41 +7,39 @@
         <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-            <a href="{{ (auth()->check() && (auth()->user()->role ?? null) === 'admin') ? route('admin.dashboard') : route('client.home') }}" class="block w-full text-center" wire:navigate>
+            <a href="{{ (auth()->check() && (auth()->user()->role ?? null) === 'admin') ? route('admin.dashboard') : ((auth()->check() && (auth()->user()->role ?? null) === 'staff') ? route('staff.welcome') : route('client.home')) }}" class="block w-full text-center" wire:navigate>
                 <x-app-logo />
             </a>
 
             <flux:navlist variant="outline">
+                @if(auth()->check() && (auth()->user()->role ?? null) === 'patient')
                 <flux:navlist.group :heading="__('Platform')" class="grid">
-                    @if(auth()->check() && (auth()->user()->role ?? null) !== 'admin')
                         <flux:navlist.item icon="home" :href="route('client.home')" :current="request()->routeIs('client.home')" class="[&_*[data-slot=icon]]:text-sky-600">{{ __('Home') }}</flux:navlist.item>
                         <flux:navlist.item icon="calendar-days" :href="route('client.appointments.create')" :current="request()->routeIs('client.appointments.create')" wire:navigate class="[&_*[data-slot=icon]]:text-emerald-600">{{ __('Appointments') }}</flux:navlist.item>
                         <flux:navlist.item icon="credit-card" :href="route('client.billing.history')" :current="request()->routeIs('client.billing.history')" wire:navigate class="[&_*[data-slot=icon]]:text-violet-600">{{ __('Billing') }}</flux:navlist.item>
-                    @endif
-                    @if(auth()->check() && (auth()->user()->role ?? null) === 'admin')
+                </flux:navlist.group>
+                @endif
+
+                @if(auth()->check() && (auth()->user()->role ?? null) === 'admin')
+                <flux:navlist.group :heading="__('Platform')" class="grid">
                         <flux:navlist.item icon="layout-grid" :href="route('admin.dashboard')" :current="request()->routeIs('admin.dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
-                    @endif
-                    @if(auth()->check() && (auth()->user()->role ?? null) === 'admin')
-                     
                         <flux:navlist.item icon="calendar-days" :href="route('admin.appointments.index')" :current="request()->routeIs('admin.appointments.*')" wire:navigate>{{ __('Appointments') }}</flux:navlist.item>
                         <flux:navlist.item icon="users" :href="route('admin.patients.index')" :current="request()->routeIs('admin.patients.index')" wire:navigate>{{ __('Patients') }}</flux:navlist.item>
                         <flux:navlist.item icon="user-group" :href="route('admin.staff.index')" :current="request()->routeIs('admin.staff.*')" wire:navigate>{{ __('Manage Staff') }}</flux:navlist.item>
                         <flux:navlist.item icon="rectangle-stack" :href="route('admin.visit-types.index')" :current="request()->routeIs('admin.visit-types.*')" wire:navigate>{{ __('Visit Types') }}</flux:navlist.item>
-                    @endif
                 </flux:navlist.group>
+                @endif
 
-                @if(auth()->check() && (auth()->user()->role ?? null) !== 'admin')
+                @if(auth()->check() && (auth()->user()->role ?? null) === 'patient')
                 <flux:navlist.group :heading="__('Child Health')" class="grid mt-2">
                     <flux:navlist.item icon="document-text" :href="route('client.medical-history')" :current="request()->routeIs('client.medical-history')" wire:navigate class="[&_*[data-slot=icon]]:text-rose-600">{{ __('Medical History') }}</flux:navlist.item>
                     <flux:navlist.item icon="phone" :href="route('client.contact-info')" :current="request()->routeIs('client.contact-info')" wire:navigate class="[&_*[data-slot=icon]]:text-indigo-600">{{ __('Contact Info') }}</flux:navlist.item>
-                  
                 </flux:navlist.group>
                 @endif
 
                 @if(auth()->check() && (auth()->user()->role ?? null) === 'admin')
                 <flux:navlist.group :heading="__('Records')" class="grid mt-2">
                     <flux:navlist.item icon="document-text" :href="route('admin.medical-records.index')" :current="request()->routeIs('admin.medical-records.*')" wire:navigate>{{ __('Medical Records') }}</flux:navlist.item>
-                    <flux:navlist.item icon="shield-check" :href="route('admin.diagnoses.index')" :current="request()->routeIs('admin.diagnoses.*')" wire:navigate>{{ __('Diagnoses') }}</flux:navlist.item>
                     <flux:navlist.item icon="clipboard-document-list" :href="route('admin.prescriptions.index')" :current="request()->routeIs('admin.prescriptions.*')" wire:navigate>{{ __('Prescriptions') }}</flux:navlist.item>
                 </flux:navlist.group>
                 @endif

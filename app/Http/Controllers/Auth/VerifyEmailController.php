@@ -14,9 +14,12 @@ class VerifyEmailController extends Controller
     public function __invoke(EmailVerificationRequest $request): RedirectResponse
     {
         // Determine role-aware default destination
-        $default = ((optional($request->user())->role ?? 'patient') === 'admin')
+        $role = (optional($request->user())->role ?? 'patient');
+        $default = $role === 'admin'
             ? route('admin.dashboard', absolute: false)
-            : route('client.home', absolute: false);
+            : ($role === 'staff'
+                ? route('staff.welcome', absolute: false)
+                : route('client.home', absolute: false));
 
         if ($request->user()->hasVerifiedEmail()) {
             return redirect()->intended($default.'?verified=1');

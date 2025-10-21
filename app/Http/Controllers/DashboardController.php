@@ -20,8 +20,12 @@ class DashboardController extends Controller
         // Role-aware redirects: admins to admin dashboard, patients to client home
         $user = $request->user();
         if ($user) {
-            if (($user->role ?? 'patient') === 'admin') {
+            $role = $user->role ?? 'patient';
+            if ($role === 'admin') {
                 return redirect()->route('admin.dashboard');
+            }
+            if ($role === 'staff') {
+                return redirect()->route('staff.welcome');
             }
             return redirect()->route('client.home');
         }

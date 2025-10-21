@@ -62,6 +62,9 @@ Route::middleware(['auth'])->group(function () {
         )
         ->name('two-factor.show');
 
+    // Staff welcome route
+    Route::get('/staff', [\App\Http\Controllers\StaffController::class, 'welcome'])->name('staff.welcome');
+
     // Grouped admin routes
     Route::prefix('admin')->name('admin.')->group(function () {
         // Admin dashboard

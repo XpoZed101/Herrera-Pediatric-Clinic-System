@@ -66,7 +66,7 @@ class AppointmentController extends Controller
             ->with('status_updated', "Appointment #{$appointment->id} checked out.");
     }
 
-    public function updateStatus(Request $request, Appointment $appointment): RedirectResponse
+    public function updateStatus(Request $request, Appointment $appointment)
     {
         abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'staff', 403);
 
@@ -77,9 +77,30 @@ class AppointmentController extends Controller
         $appointment->status = $validated['status'];
         $appointment->save();
 
+        // Send email immediately on status change
+        $recipient = optional($appointment->user)->email;
+        $emailSent = false;
+        if ($recipient) {
+            try {
+                Mail::to($recipient)->send(new AppointmentStatusMail($appointment));
+                $emailSent = true;
+            } catch (\Throwable $e) {
+                // swallow exception; we'll still respond OK to UI
+            }
+        }
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'ok' => true,
+                'status' => $validated['status'],
+                'email_sent' => $emailSent,
+            ]);
+        }
+
         return redirect()
             ->route('staff.appointments.index')
-            ->with('status_updated', "Appointment #{$appointment->id} status updated to {$validated['status']}");
+            ->with('status_updated', "Appointment #{$appointment->id} status updated to {$validated['status']}")
+            ->with('email_sent', $emailSent ? "Email sent to {$recipient}" : null);
     }
 
     public function email(Request $request, Appointment $appointment): RedirectResponse

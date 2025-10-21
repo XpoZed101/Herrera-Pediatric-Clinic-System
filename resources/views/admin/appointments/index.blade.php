@@ -80,9 +80,6 @@
                                                     <option value="{{ $opt }}" @selected(($appointment->status ?? 'requested') === $opt)>{{ ucfirst($opt) }}</option>
                                                 @endforeach
                                             </select>
-                                            <button type="submit" class="inline-flex items-center gap-1 rounded-lg bg-accent text-white px-3 py-1 hover:opacity-90">
-                                                <flux:icon.check variant="mini" /> Update
-                                            </button>
                                         </form>
 
                                         @if($appointment->medicalRecord)
@@ -106,8 +103,103 @@
                 {{ $appointments->links() }}
             </div>
         </div>
-        
-        
+
+
         {{-- Script is imported via app.js; avoid separate Vite entry to prevent manifest errors --}}
-    </div>
-</x-layouts.app>
+        <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const page = document.getElementById('admin-appointments-page');
+          if (!page) return;
+          const forms = page.querySelectorAll('form[action$="/status"]');
+          forms.forEach(form => {
+            const select = form.querySelector('select[name="status"]');
+            if (!select) return;
+            let prev = select.value;
+            select.addEventListener('focus', () => { prev = select.value; });
+            select.addEventListener('change', async () => {
+              const newVal = select.value;
+              const label = select.options[select.selectedIndex]?.text || newVal;
+              try {
+                const swal = window.Swal;
+                if (swal) {
+                  const result = await swal.fire({
+                    icon: 'question',
+                    title: 'Update status?',
+                    text: `Change appointment status to ${label}?`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, update',
+                    cancelButtonText: 'Cancel',
+                    confirmButtonColor: '#2563eb',
+                  });
+                  if (!result.isConfirmed) {
+                    select.value = prev;
+                    return;
+                  }
+                }
+
+                const token = form.querySelector('input[name="_token"]')?.value;
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn?.setAttribute('disabled', 'disabled');
+                select.setAttribute('disabled', 'disabled');
+
+                const res = await fetch(form.action, {
+                  method: 'POST',
+                  headers: {
+                    'X-CSRF-TOKEN': token || '',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                  },
+                  body: new URLSearchParams({ status: newVal }),
+                });
+                if (!res.ok) throw new Error('Failed to update');
+                const data = await res.json().catch(() => ({}));
+                 prev = newVal;
+ 
+                 // Update status badge text and colors without refresh
+                 const row = form.closest('tr');
+                 const statusCell = row?.querySelector('td:nth-child(4)');
+                 const badge = statusCell?.querySelector('span');
+                 if (badge) {
+                   const classMap = {
+                     requested: 'bg-yellow-50 text-yellow-800 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-200 dark:border-yellow-800',
+                     scheduled: 'bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-200 dark:border-blue-800',
+                     completed: 'bg-green-50 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-200 dark:border-green-800',
+                     cancelled: 'bg-red-50 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-200 dark:border-red-800',
+                   };
+                   const cls = classMap[newVal] || 'bg-neutral-50 text-neutral-800 border-neutral-200 dark:bg-neutral-800 dark:text-neutral-200 dark:border-neutral-700';
+                   badge.className = 'inline-flex items-center rounded-md px-2 py-0.5 text-xs border ' + cls + ' capitalize';
+                   badge.textContent = newVal;
+                 }
+ 
+                 if (swal) {
+                   const extra = data.email_sent ? ' — Email notification sent.' : '';
+                   await swal.fire({
+                     icon: 'success',
+                     title: 'Status Updated',
+                     text: `Updated to ${label}.${extra}`,
+                     timer: 1800,
+                     showConfirmButton: false,
+                   });
+                 }
+              } catch (err) {
+                if (window.Swal) {
+                  await window.Swal.fire({
+                    icon: 'error',
+                    title: 'Update Failed',
+                    text: 'Trying standard submission...',
+                    timer: 1500,
+                    showConfirmButton: false,
+                  });
+                }
+                form.submit();
+              } finally {
+                select.removeAttribute('disabled');
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn?.removeAttribute('disabled');
+              }
+            });
+          });
+        });
+        </script>
+     </div>
+ </x-layouts.app>

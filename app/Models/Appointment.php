@@ -17,6 +17,11 @@ class Appointment extends Model
         'reason',
         'status',
         'notes',
+        // check-in/out
+        'checked_in_at',
+        'checked_out_at',
+        'checked_in_by',
+        'checked_out_by',
         // symptom flags
         'has_fever',
         'has_cough',
@@ -31,6 +36,10 @@ class Appointment extends Model
 
     protected $casts = [
         'scheduled_at' => 'datetime',
+        'checked_in_at' => 'datetime',
+        'checked_out_at' => 'datetime',
+        'checked_in_by' => 'integer',
+        'checked_out_by' => 'integer',
         'has_fever' => 'boolean',
         'has_cough' => 'boolean',
         'has_vomiting' => 'boolean',

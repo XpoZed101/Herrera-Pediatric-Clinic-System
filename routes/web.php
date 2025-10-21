@@ -65,6 +65,19 @@ Route::middleware(['auth'])->group(function () {
     // Staff welcome route
     Route::get('/staff', [\App\Http\Controllers\StaffController::class, 'welcome'])->name('staff.welcome');
 
+    // Staff routes
+    Route::prefix('staff')->name('staff.')->group(function () {
+        // Appointments
+        Route::get('/appointments', [\App\Http\Controllers\Staff\AppointmentController::class, 'index'])->name('appointments.index');
+        Route::get('/appointments/{appointment}', [\App\Http\Controllers\Staff\AppointmentController::class, 'show'])->name('appointments.show')->whereNumber('appointment');
+        Route::post('/appointments/{appointment}/check-in', [\App\Http\Controllers\Staff\AppointmentController::class, 'checkIn'])->name('appointments.check-in')->whereNumber('appointment');
+        Route::post('/appointments/{appointment}/check-out', [\App\Http\Controllers\Staff\AppointmentController::class, 'checkOut'])->name('appointments.check-out')->whereNumber('appointment');
+
+        // Patient registration
+        Route::get('/patients/create', [\App\Http\Controllers\Staff\PatientController::class, 'create'])->name('patients.create');
+        Route::post('/patients', [\App\Http\Controllers\Staff\PatientController::class, 'store'])->name('patients.store');
+    });
+
     // Grouped admin routes
     Route::prefix('admin')->name('admin.')->group(function () {
         // Admin dashboard

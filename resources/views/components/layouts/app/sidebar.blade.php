@@ -20,6 +20,12 @@
                 </flux:navlist.group>
                 @endif
 
+                @if(auth()->check() && (auth()->user()->role ?? null) === 'staff')
+                <flux:navlist.group :heading="__('Platform')" class="grid">
+                        <flux:navlist.item icon="layout-grid" :href="route('staff.welcome')" :current="request()->routeIs('staff.welcome')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
+                        <flux:navlist.item icon="calendar-days" :href="route('staff.appointments.index')" :current="request()->routeIs('staff.appointments.*')" wire:navigate>{{ __('Appointments') }}</flux:navlist.item>
+                </flux:navlist.group>
+                @endif
                 @if(auth()->check() && (auth()->user()->role ?? null) === 'admin')
                 <flux:navlist.group :heading="__('Platform')" class="grid">
                         <flux:navlist.item icon="layout-grid" :href="route('admin.dashboard')" :current="request()->routeIs('admin.dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>

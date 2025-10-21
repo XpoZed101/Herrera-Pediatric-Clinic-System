@@ -33,4 +33,20 @@ class PatientController extends Controller
         return redirect()->route('staff.appointments.index')
             ->with('status', "Patient '{$patient->child_name}' registered successfully.");
     }
+
+    public function index(): View
+    {
+        abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'staff', 403);
+
+        $patients = Patient::latest()->paginate(15);
+        return view('staff.patients.index', compact('patients'));
+    }
+
+    public function show(Patient $patient): View
+    {
+        abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'staff', 403);
+
+        $patient->load(['guardian', 'emergencyContact']);
+        return view('staff.patients.show', compact('patient'));
+    }
 }

@@ -73,9 +73,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/appointments/{appointment}/check-in', [\App\Http\Controllers\Staff\AppointmentController::class, 'checkIn'])->name('appointments.check-in')->whereNumber('appointment');
         Route::post('/appointments/{appointment}/check-out', [\App\Http\Controllers\Staff\AppointmentController::class, 'checkOut'])->name('appointments.check-out')->whereNumber('appointment');
 
-        // Patient registration
+        // Patient registration and handling
+        Route::get('/patients', [\App\Http\Controllers\Staff\PatientController::class, 'index'])->name('patients.index');
         Route::get('/patients/create', [\App\Http\Controllers\Staff\PatientController::class, 'create'])->name('patients.create');
         Route::post('/patients', [\App\Http\Controllers\Staff\PatientController::class, 'store'])->name('patients.store');
+        Route::get('/patients/{patient}', [\App\Http\Controllers\Staff\PatientController::class, 'show'])->name('patients.show')->whereNumber('patient');
     });
 
     // Grouped admin routes

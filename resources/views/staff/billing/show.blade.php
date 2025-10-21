@@ -56,7 +56,6 @@
                             <div class="text-sm font-medium mb-2">{{ __('Process Payment') }}</div>
                             <form x-data="{ method: '{{ $payment->payment_method ?? 'cash' }}' }" method="POST" action="{{ route('staff.billing.payments.mark-paid', $payment) }}" class="flex flex-col gap-3">
                                 @csrf
-                                @method('PUT')
                                 <div>
                                     <label class="text-xs text-neutral-600 dark:text-neutral-300">{{ __('Payment Method') }}</label>
                                     <select name="payment_method" x-model="method" class="mt-1 w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-800 p-2 text-sm">

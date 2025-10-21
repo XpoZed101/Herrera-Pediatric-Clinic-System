@@ -72,6 +72,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/appointments/{appointment}', [\App\Http\Controllers\Staff\AppointmentController::class, 'show'])->name('appointments.show')->whereNumber('appointment');
         Route::post('/appointments/{appointment}/check-in', [\App\Http\Controllers\Staff\AppointmentController::class, 'checkIn'])->name('appointments.check-in')->whereNumber('appointment');
         Route::post('/appointments/{appointment}/check-out', [\App\Http\Controllers\Staff\AppointmentController::class, 'checkOut'])->name('appointments.check-out')->whereNumber('appointment');
+Route::post('/appointments/{appointment}/status', [\App\Http\Controllers\Staff\AppointmentController::class, 'updateStatus'])->name('appointments.update-status')->whereNumber('appointment');
+Route::post('/appointments/{appointment}/email', [\App\Http\Controllers\Staff\AppointmentController::class, 'email'])->name('appointments.email')->whereNumber('appointment');
 
         // Billing & Payments
         Route::get('/billing', [\App\Http\Controllers\Staff\BillingController::class, 'index'])->name('billing.index');

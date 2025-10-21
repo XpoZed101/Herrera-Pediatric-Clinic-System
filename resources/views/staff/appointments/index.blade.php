@@ -64,6 +64,25 @@
                                         <a href="{{ route('staff.appointments.show', $appointment) }}" class="inline-flex items-center gap-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 px-3 py-1 hover:bg-neutral-200 dark:hover:bg-neutral-700" wire:navigate>
                                             <flux:icon.eye variant="mini" /> View
                                         </a>
+                                        <form method="POST" action="{{ route('staff.appointments.update-status', $appointment) }}" class="inline-flex items-center gap-2">
+                                            @csrf
+                                            @php $current = $appointment->status ?? 'requested'; @endphp
+                                            <select name="status" class="rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 text-sm px-2 py-1">
+                                                <option value="requested" {{ $current === 'requested' ? 'selected' : '' }}>Requested</option>
+                                                <option value="scheduled" {{ $current === 'scheduled' ? 'selected' : '' }}>Scheduled</option>
+                                                <option value="completed" {{ $current === 'completed' ? 'selected' : '' }}>Completed</option>
+                                                <option value="cancelled" {{ $current === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                            </select>
+                                            <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 px-3 py-1 hover:bg-neutral-200 dark:hover:bg-neutral-700">
+                                                <flux:icon.arrow-path variant="mini" /> Update
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ route('staff.appointments.email', $appointment) }}" class="inline">
+                                            @csrf
+                                            <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-purple-600 text-white px-3 py-1 hover:bg-purple-700">
+                                                Email
+                                            </button>
+                                        </form>
                                         @if(!$appointment->checked_in_at)
                                             <form method="POST" action="{{ route('staff.appointments.check-in', $appointment) }}" class="inline">
                                                 @csrf

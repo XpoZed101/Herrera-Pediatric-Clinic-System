@@ -13,7 +13,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\RecordRequest;
 
 class PatientController extends Controller
 {
@@ -293,5 +295,104 @@ class PatientController extends Controller
             ->get();
 
         return view('client.appointment-history', compact('patient', 'currentAppointments', 'pastAppointments'));
+    }
+
+    /**
+     * Show Medical Records Request form for the authenticated client.
+     */
+    public function recordsRequestForm(): View
+    {
+        $user = Auth::user();
+        $guardian = null;
+        $patient = null;
+
+        if ($user) {
+            $guardian = Guardian::where('email', $user->email)->first();
+            $patient = $guardian?->patient;
+        }
+
+        $patient = $patient ?? Patient::query()->first();
+
+        return view('client.records-request', [
+            'user' => $user,
+            'guardian' => $guardian,
+            'patient' => $patient,
+        ]);
+    }
+
+    /**
+     * Handle Medical Records Request submission.
+     */
+    public function recordsRequestSubmit(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'record_type' => ['required','string','in:history,vaccinations,prescriptions,diagnoses,visit_summaries,lab_results'],
+            'date_start' => ['nullable','date'],
+            'date_end' => ['nullable','date','after_or_equal:date_start'],
+            'delivery' => ['required','in:download,email,pickup'],
+            'email' => ['nullable','email','required_if:delivery,email'],
+            'purpose' => ['nullable','string','max:255'],
+            'notes' => ['nullable','string','max:1000'],
+            'medical_record_id' => ['nullable','integer','exists:medical_records,id'],
+        ]);
+
+        // Determine patient context for saving
+        $user = $request->user();
+        $guardian = null;
+        $patient = null;
+        if ($user) {
+            $guardian = Guardian::where('email', $user->email)->first();
+            $patient = $guardian?->patient;
+        }
+        $patient = $patient ?? Patient::query()->first();
+
+        // If Complete Medical History, resolve medical_record_id when not provided
+        $medicalRecordId = $validated['medical_record_id'] ?? null;
+        if ($validated['record_type'] === 'history' && !$medicalRecordId) {
+            $latestRecord = null;
+            if ($patient) {
+                $latestRecord = MedicalRecord::whereHas('appointment', function ($aq) use ($patient) {
+                    $aq->where('patient_id', $patient->id);
+                })->latest('conducted_at')->first();
+            }
+            if (!$latestRecord && $user) {
+                $latestRecord = MedicalRecord::where('user_id', $user->id)
+                    ->latest('conducted_at')
+                    ->first();
+            }
+            $medicalRecordId = $latestRecord?->id;
+        }
+
+        // Persist the request with a default waiting status
+        $recordRequest = RecordRequest::create([
+            'patient_id' => $patient?->id,
+            'user_id' => $user?->id,
+            'medical_record_id' => $medicalRecordId,
+            'record_type' => $validated['record_type'],
+            'date_start' => $validated['date_start'] ?? null,
+            'date_end' => $validated['date_end'] ?? null,
+            'delivery_method' => $validated['delivery'],
+            'delivery_email' => $validated['email'] ?? null,
+            'purpose' => $validated['purpose'] ?? null,
+            'notes' => $validated['notes'] ?? null,
+            'status' => 'waiting',
+        ]);
+
+        // Log the saved request for staff follow-up
+        Log::info('Medical Records Request saved', [
+            'request_id' => $recordRequest->id,
+            'user_id' => $recordRequest->user_id,
+            'patient_id' => $recordRequest->patient_id,
+            'medical_record_id' => $recordRequest->medical_record_id,
+            'record_type' => $recordRequest->record_type,
+            'date_start' => $recordRequest->date_start?->toDateString(),
+            'date_end' => $recordRequest->date_end?->toDateString(),
+            'delivery_method' => $recordRequest->delivery_method,
+            'delivery_email' => $recordRequest->delivery_email,
+            'purpose' => $recordRequest->purpose,
+            'status' => $recordRequest->status,
+        ]);
+
+        return back()->with('status', __('Saved! Status: waiting for completion.'));
     }
 }

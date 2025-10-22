@@ -9,9 +9,16 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WaitlistInviteMail;
+use App\Services\EmailService;
 
 class WaitlistController extends Controller
 {
+    public function __construct(private EmailService $emailService)
+    {
+    }
+
     public function index(): View
     {
         abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'staff', 403);
@@ -54,7 +61,7 @@ class WaitlistController extends Controller
         return redirect()->route('staff.waitlist.index')->with('status', 'Added to waitlist.');
     }
 
-    public function updateStatus(Request $request, WaitlistEntry $entry): RedirectResponse
+    public function updateStatus(Request $request, WaitlistEntry $entry): RedirectResponse|\Illuminate\Http\JsonResponse
     {
         abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'staff', 403);
 
@@ -64,7 +71,27 @@ class WaitlistController extends Controller
 
         $entry->update(['status' => $data['status']]);
 
-        return redirect()->route('staff.waitlist.index')->with('status', 'Waitlist status updated.');
+        $flash = ['status_updated' => 'Waitlist status updated.'];
+
+        if ($data['status'] === 'invited') {
+            $result = $this->emailService->sendWaitlistInviteEmail($entry);
+            if ($result['success']) {
+                $flash['email_sent'] = $result['message'];
+            } else {
+                $flash['error'] = $result['message'];
+            }
+        }
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'ok' => true,
+                'status' => $data['status'],
+                'email_sent' => isset($flash['email_sent']),
+                'message' => $flash['email_sent'] ?? $flash['status_updated'] ?? $flash['error'] ?? 'Waitlist updated.',
+            ]);
+        }
+
+        return redirect()->route('staff.waitlist.index')->with($flash);
     }
 
     public function destroy(WaitlistEntry $entry): RedirectResponse

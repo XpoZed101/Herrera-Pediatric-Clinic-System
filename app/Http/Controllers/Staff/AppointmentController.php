@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 use App\Mail\AppointmentStatusMail;
+use App\Services\EmailService;
 
 class AppointmentController extends Controller
 {
@@ -66,6 +67,10 @@ class AppointmentController extends Controller
             ->with('status_updated', "Appointment #{$appointment->id} checked out.");
     }
 
+    public function __construct(private EmailService $emailService)
+    {
+    }
+
     public function updateStatus(Request $request, Appointment $appointment)
     {
         abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'staff', 403);
@@ -77,52 +82,43 @@ class AppointmentController extends Controller
         $appointment->status = $validated['status'];
         $appointment->save();
 
-        // Send email immediately on status change
-        $recipient = optional($appointment->user)->email;
-        $emailSent = false;
-        if ($recipient) {
-            try {
-                Mail::to($recipient)->send(new AppointmentStatusMail($appointment));
-                $emailSent = true;
-            } catch (\Throwable $e) {
-                // swallow exception; we'll still respond OK to UI
-            }
-        }
+        // Send email using EmailService
+        $emailResult = $this->emailService->sendAppointmentStatusEmail($appointment);
 
         if ($request->wantsJson()) {
             return response()->json([
                 'ok' => true,
                 'status' => $validated['status'],
-                'email_sent' => $emailSent,
+                'email_sent' => $emailResult['success'],
+                'message' => $emailResult['message']
             ]);
         }
 
-        return redirect()
-            ->route('staff.appointments.index')
-            ->with('status_updated', "Appointment #{$appointment->id} status updated to {$validated['status']}")
-            ->with('email_sent', $emailSent ? "Email sent to {$recipient}" : null);
+        $response = redirect()->route('staff.appointments.index')
+            ->with('status_updated', "Appointment #{$appointment->id} status updated to {$validated['status']}");
+
+        if ($emailResult['success']) {
+            $response->with('email_sent', $emailResult['message']);
+        }
+
+        return $response;
     }
 
     public function email(Request $request, Appointment $appointment): RedirectResponse
     {
         abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'staff', 403);
 
-        $recipient = optional($appointment->user)->email;
-        if (!$recipient) {
+        // Use EmailService for separation of concerns
+        $emailResult = $this->emailService->sendAppointmentStatusEmail($appointment);
+
+        if ($emailResult['success']) {
             return redirect()
                 ->route('staff.appointments.index')
-                ->with('status_updated', "No email found for appointment #{$appointment->id}.");
+                ->with('email_sent', $emailResult['message']);
         }
 
-        try {
-            Mail::to($recipient)->send(new AppointmentStatusMail($appointment));
-            return redirect()
-                ->route('staff.appointments.index')
-                ->with('email_sent', "Email sent to {$recipient} for appointment #{$appointment->id}.");
-        } catch (\Throwable $e) {
-            return redirect()
-                ->route('staff.appointments.index')
-                ->with('status_updated', "Failed to send email: " . $e->getMessage());
-        }
+        return redirect()
+            ->route('staff.appointments.index')
+            ->with('status_updated', 'Failed to send email: ' . ($emailResult['message'] ?? 'Unknown error'));
     }
 }

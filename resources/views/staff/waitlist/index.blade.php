@@ -14,6 +14,26 @@
             </div>
         </div>
 
+        @if(session('status') || session('status_updated') || session('email_sent'))
+            <div class="rounded-2xl border border-emerald-200 bg-emerald-50 dark:border-emerald-700 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-200 p-4 space-y-1">
+                @if(session('status'))
+                    <div>{{ session('status') }}</div>
+                @endif
+                @if(session('status_updated'))
+                    <div>{{ session('status_updated') }}</div>
+                @endif
+                @if(session('email_sent'))
+                    <div>{{ session('email_sent') }}</div>
+                @endif
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="rounded-2xl border border-red-200 bg-red-50 dark:border-red-700 dark:bg-red-900/20 text-red-700 dark:text-red-200 p-4">
+                {{ session('error') }}
+            </div>
+        @endif
+
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-5 border border-gray-100 dark:border-gray-700">
                 <h3 class="text-gray-900 dark:text-white font-semibold mb-4">{{ __('Add to Waitlist') }}</h3>

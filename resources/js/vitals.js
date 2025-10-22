@@ -18,12 +18,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.remove('overflow-hidden');
   };
 
-  document.querySelectorAll('.js-open-vitals').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const url = btn.getAttribute('data-vitals-url');
-      if (url) open(url);
-    });
+  // Use event delegation so clicks still work after table refreshes
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.js-open-vitals');
+    if (!btn) return;
+    e.preventDefault();
+    const url = btn.getAttribute('data-vitals-url');
+    if (url) open(url);
   });
 
   if (overlay) overlay.addEventListener('click', close);

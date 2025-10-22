@@ -62,6 +62,7 @@
                             <div class="text-sm text-neutral-600 dark:text-neutral-300">
                                 {{ $appt->reason ?? __('No reason provided') }}
                             </div>
+                            <x-client.vitals-summary :appointment="$appt" />
                             <div class="flex gap-2 mt-auto">
                                 <a href="{{ route('client.appointments.create') }}" class="inline-flex items-center gap-2 rounded-lg border border-neutral-200 dark:border-neutral-700 px-3 py-1.5 text-xs hover:bg-neutral-100 dark:hover:bg-neutral-800">
                                     <flux:icon.pencil-square variant="mini" /> {{ __('Reschedule') }}
@@ -121,6 +122,7 @@
                             <div class="text-sm text-neutral-600 dark:text-neutral-300">
                                 {{ $appt->reason ?? __('No reason provided') }}
                             </div>
+                            <x-client.vitals-summary :appointment="$appt" />
                             <div class="flex gap-2 mt-auto">
                                 <a href="{{ route('client.appointments.create') }}" class="inline-flex items-center gap-2 rounded-lg border border-neutral-200 dark:border-neutral-700 px-3 py-1.5 text-xs hover:bg-neutral-100 dark:hover:bg-neutral-800">
                                     <flux:icon.eye variant="mini" /> {{ __('Book again') }}

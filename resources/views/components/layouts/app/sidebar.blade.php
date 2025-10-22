@@ -22,14 +22,26 @@
 
                 @if(auth()->check() && (auth()->user()->role ?? null) === 'staff')
                 <flux:navlist.group :heading="__('Platform')" class="grid">
-                        <flux:navlist.item icon="layout-grid" :href="route('staff.welcome')" :current="request()->routeIs('staff.welcome')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
-                        <flux:navlist.item icon="calendar-days" :href="route('staff.appointments.index')" :current="request()->routeIs('staff.appointments.*')" wire:navigate>{{ __('Appointments') }}</flux:navlist.item>
-                        <flux:navlist.item icon="queue-list" :href="route('staff.queue.index')" :current="request()->routeIs('staff.queue.*')" wire:navigate>{{ __('Queue') }}</flux:navlist.item>
-                        <flux:navlist.item icon="clipboard-document-list" :href="route('staff.waitlist.index')" :current="request()->routeIs('staff.waitlist.*')" wire:navigate>{{ __('Waitlist') }}</flux:navlist.item>
-                        <flux:navlist.item icon="users" :href="route('staff.patients.index')" :current="request()->routeIs('staff.patients.*')" wire:navigate>{{ __('Patients') }}</flux:navlist.item>
-                        <flux:navlist.item icon="credit-card" :href="route('staff.billing.index')" :current="request()->routeIs('staff.billing.*')" wire:navigate>{{ __('Billing') }}</flux:navlist.item>
-                        <flux:navlist.item icon="document-duplicate" :href="route('staff.record-requests.index')" :current="request()->routeIs('staff.record-requests.*')" wire:navigate>{{ __('Record Requests') }}</flux:navlist.item>
-                        <flux:navlist.item icon="phone" :href="route('staff.phone-inquiries.index')" :current="request()->routeIs('staff.phone-inquiries.*')" wire:navigate>{{ __('Phone Inquiries') }}</flux:navlist.item>
+                        <flux:navlist.item icon="layout-grid" :href="route('staff.welcome')" :current="request()->routeIs('staff.welcome')" wire:navigate class="[&_*[data-slot=icon]]:text-sky-600">{{ __('Dashboard') }}</flux:navlist.item>
+                </flux:navlist.group>
+
+                <flux:navlist.group :heading="__('Visits')" class="grid mt-2">
+                        <flux:navlist.item icon="calendar-days" :href="route('staff.appointments.index')" :current="request()->routeIs('staff.appointments.*')" wire:navigate class="[&_*[data-slot=icon]]:text-emerald-600">{{ __('Appointments') }}</flux:navlist.item>
+                        <flux:navlist.item icon="queue-list" :href="route('staff.queue.index')" :current="request()->routeIs('staff.queue.*')" wire:navigate class="[&_*[data-slot=icon]]:text-sky-600">{{ __('Queue') }}</flux:navlist.item>
+                        <flux:navlist.item icon="clipboard-document-list" :href="route('staff.waitlist.index')" :current="request()->routeIs('staff.waitlist.*')" wire:navigate class="[&_*[data-slot=icon]]:text-fuchsia-600">{{ __('Waitlist') }}</flux:navlist.item>
+                </flux:navlist.group>
+
+                <flux:navlist.group :heading="__('People')" class="grid mt-2">
+                        <flux:navlist.item icon="users" :href="route('staff.patients.index')" :current="request()->routeIs('staff.patients.*')" wire:navigate class="[&_*[data-slot=icon]]:text-rose-600">{{ __('Patients') }}</flux:navlist.item>
+                        <flux:navlist.item icon="phone" :href="route('staff.phone-inquiries.index')" :current="request()->routeIs('staff.phone-inquiries.*')" wire:navigate class="[&_*[data-slot=icon]]:text-indigo-600">{{ __('Phone Inquiries') }}</flux:navlist.item>
+                </flux:navlist.group>
+
+                <flux:navlist.group :heading="__('Finance')" class="grid mt-2">
+                        <flux:navlist.item icon="credit-card" :href="route('staff.billing.index')" :current="request()->routeIs('staff.billing.*')" wire:navigate class="[&_*[data-slot=icon]]:text-amber-600">{{ __('Billing') }}</flux:navlist.item>
+                </flux:navlist.group>
+
+                <flux:navlist.group :heading="__('Records')" class="grid mt-2">
+                        <flux:navlist.item icon="document-duplicate" :href="route('staff.record-requests.index')" :current="request()->routeIs('staff.record-requests.*')" wire:navigate class="[&_*[data-slot=icon]]:text-violet-600">{{ __('Record Requests') }}</flux:navlist.item>
                 </flux:navlist.group>
                 @endif
                 @if(auth()->check() && (auth()->user()->role ?? null) === 'admin')

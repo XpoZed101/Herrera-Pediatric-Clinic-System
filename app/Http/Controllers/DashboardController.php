@@ -87,6 +87,10 @@ class DashboardController extends Controller
             }
         }
 
+        $user = $request->user();
+        if ($user && ($user->role ?? null) === 'admin') {
+            return redirect()->route('admin.dashboard')->with('status', "Reminders sent: {$sent}");
+        }
         return redirect()->route('dashboard')->with('status', "Reminders sent: {$sent}");
     }
 }

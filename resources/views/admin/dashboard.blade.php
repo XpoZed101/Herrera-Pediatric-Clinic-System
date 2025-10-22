@@ -15,6 +15,28 @@
             </div>
         </div>
 
+        <!-- Reminders -->
+        <div class="rounded-xl border border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800 p-4">
+            <div class="flex items-start gap-3">
+                <flux:icon.bell variant="mini" class="mt-1" />
+                <div>
+                    <div class="font-medium">{{ __('Appointment Reminders') }}</div>
+                    <p class="text-sm text-neutral-700 dark:text-neutral-300">{{ __('Send a 24‑hour email reminder for tomorrow’s scheduled appointments.') }}</p>
+                    <div class="mt-3 flex items-center gap-3">
+                        <form method="POST" action="{{ route('dashboard.reminders.send') }}">
+                            @csrf
+                            <button type="submit" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <flux:icon.paper-airplane variant="mini" /> {{ __('Send reminders now') }}
+                            </button>
+                        </form>
+                        @if(session('status'))
+                            <span class="text-sm text-blue-800 bg-blue-100 px-2 py-1 rounded">{{ session('status') }}</span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Top stats -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-5 border border-gray-100 dark:border-gray-700">

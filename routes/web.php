@@ -216,7 +216,12 @@ Route::middleware(['auth'])->prefix('client')->name('client.')->group(function (
     // PDF download for medical history
     Route::get('/medical-history/pdf', [ClientPatientController::class, 'medicalHistoryPdf'])->name('medical-history.pdf');
     Route::get('/immunizations', [ClientPatientController::class, 'immunizations'])->name('immunizations');
-    
+
+    // New: Prescriptions page
+    Route::get('/prescriptions', [ClientPatientController::class, 'prescriptions'])->name('prescriptions');
+    // PDF download for prescriptions
+    Route::get('/prescriptions/pdf', [ClientPatientController::class, 'prescriptionsPdf'])->name('prescriptions.pdf');
+
     // New: Appointment history page
     Route::get('/appointments/history', [ClientPatientController::class, 'appointmentHistory'])->name('appointments.history');
 

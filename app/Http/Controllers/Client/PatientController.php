@@ -16,6 +16,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\RecordRequest;
+use App\Models\Prescription; // Added
 
 class PatientController extends Controller
 {
@@ -71,6 +72,37 @@ class PatientController extends Controller
         }
 
         return view('client.immunizations', compact('patient'));
+    }
+
+    // New: Prescriptions list for the authenticated client
+    public function prescriptions(): View
+    {
+        $user = Auth::user();
+        $patient = null;
+
+        if ($user) {
+            $guardian = Guardian::where('email', $user->email)->first();
+            $patient = $guardian?->patient;
+        }
+
+        $patient = $patient ?? Patient::query()->first();
+
+        $prescriptions = Prescription::with(['medicalRecord.appointment.patient', 'prescriber'])
+            ->whereHas('medicalRecord', function ($mq) use ($user, $patient) {
+                if ($patient) {
+                    $mq->whereHas('appointment', function ($aq) use ($patient) {
+                        $aq->where('patient_id', $patient->id);
+                    });
+                }
+                if ($user) {
+                    $mq->orWhere('user_id', $user->id);
+                }
+            })
+            ->orderByDesc('start_date')
+            ->orderByDesc('id')
+            ->get();
+
+        return view('client.prescriptions', compact('patient', 'prescriptions'));
     }
 
     /**
@@ -218,11 +250,11 @@ class PatientController extends Controller
             if (!empty($validated['guardian_email'])) {
                 $newEmail = $validated['guardian_email'];
                 $guardian->email = $newEmail;
-            if ($user instanceof User && $user->email !== $newEmail) {
-                $user->email = $newEmail;
-                $user->email_verified_at = null; // re-verify when email changes
-                $user->save();
-            }
+                if ($user instanceof User && $user->email !== $newEmail) {
+                    $user->email = $newEmail;
+                    $user->email_verified_at = null; // re-verify when email changes
+                    $user->save();
+                }
             }
             $guardian->save();
         }
@@ -289,7 +321,7 @@ class PatientController extends Controller
             })
             ->where(function ($q) {
                 $q->where('scheduled_at', '<', now())
-                  ->orWhereIn('status', ['completed', 'cancelled']);
+                    ->orWhereIn('status', ['completed', 'cancelled']);
             })
             ->orderBy('scheduled_at', 'desc')
             ->get();
@@ -326,14 +358,14 @@ class PatientController extends Controller
     public function recordsRequestSubmit(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'record_type' => ['required','string','in:history,vaccinations,prescriptions,diagnoses,visit_summaries,lab_results'],
-            'date_start' => ['nullable','date'],
-            'date_end' => ['nullable','date','after_or_equal:date_start'],
-            'delivery' => ['required','in:download,email,pickup'],
-            'email' => ['nullable','email','required_if:delivery,email'],
-            'purpose' => ['nullable','string','max:255'],
-            'notes' => ['nullable','string','max:1000'],
-            'medical_record_id' => ['nullable','integer','exists:medical_records,id'],
+            'record_type' => ['required', 'string', 'in:history,vaccinations,prescriptions,diagnoses,visit_summaries,lab_results'],
+            'date_start' => ['nullable', 'date'],
+            'date_end' => ['nullable', 'date', 'after_or_equal:date_start'],
+            'delivery' => ['required', 'in:download,email,pickup'],
+            'email' => ['nullable', 'email', 'required_if:delivery,email'],
+            'purpose' => ['nullable', 'string', 'max:255'],
+            'notes' => ['nullable', 'string', 'max:1000'],
+            'medical_record_id' => ['nullable', 'integer', 'exists:medical_records,id'],
         ]);
 
         // Determine patient context for saving
@@ -395,4 +427,48 @@ class PatientController extends Controller
 
         return back()->with('status', __('Saved! Status: waiting for completion.'));
     }
+
+
+
+
+    // PDF: Download all prescriptions for the authenticated client
+    public function prescriptionsPdf()
+    {
+        $user = Auth::user();
+        $patient = null;
+
+        if ($user) {
+            $guardian = Guardian::where('email', $user->email)->first();
+            $patient = $guardian?->patient;
+        }
+
+        $patient = $patient ?? Patient::query()->first();
+
+        $prescriptions = Prescription::with(['medicalRecord.appointment.patient', 'prescriber'])
+            ->whereHas('medicalRecord', function ($mq) use ($user, $patient) {
+                if ($patient) {
+                    $mq->whereHas('appointment', function ($aq) use ($patient) {
+                        $aq->where('patient_id', $patient->id);
+                    });
+                }
+                if ($user) {
+                    $mq->orWhere('user_id', $user->id);
+                }
+            })
+            ->orderByDesc('start_date')
+            ->orderByDesc('id')
+            ->get();
+
+        $filenameBase = $patient?->child_name ? str_replace(' ', '-', strtolower($patient->child_name)) : 'record';
+        $filename = 'prescriptions-' . $filenameBase . '-' . now()->format('Y-m-d') . '.pdf';
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('client.prescriptions-pdf', [
+            'patient' => $patient,
+            'prescriptions' => $prescriptions,
+            'generatedAt' => now(),
+        ])->setPaper('a4');
+
+        return $pdf->download($filename);
+    }
 }
+

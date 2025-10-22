@@ -16,7 +16,6 @@
                 <flux:navlist.group :heading="__('Platform')" class="grid">
                         <flux:navlist.item icon="home" :href="route('client.home')" :current="request()->routeIs('client.home')" class="[&_*[data-slot=icon]]:text-sky-600">{{ __('Home') }}</flux:navlist.item>
                         <flux:navlist.item icon="calendar-days" :href="route('client.appointments.create')" :current="request()->routeIs('client.appointments.create')" wire:navigate class="[&_*[data-slot=icon]]:text-emerald-600">{{ __('Appointments') }}</flux:navlist.item>
-                        <flux:navlist.item icon="credit-card" :href="route('client.billing.history')" :current="request()->routeIs('client.billing.history')" wire:navigate class="[&_*[data-slot=icon]]:text-violet-600">{{ __('Billing') }}</flux:navlist.item>
                 </flux:navlist.group>
                 @endif
 
@@ -28,7 +27,6 @@
                 <flux:navlist.group :heading="__('Visits')" class="grid mt-2">
                         <flux:navlist.item icon="calendar-days" :href="route('staff.appointments.index')" :current="request()->routeIs('staff.appointments.*')" wire:navigate class="[&_*[data-slot=icon]]:text-emerald-600">{{ __('Appointments') }}</flux:navlist.item>
                         <flux:navlist.item icon="queue-list" :href="route('staff.queue.index')" :current="request()->routeIs('staff.queue.*')" wire:navigate class="[&_*[data-slot=icon]]:text-sky-600">{{ __('Queue') }}</flux:navlist.item>
-                        <flux:navlist.item icon="clipboard-document-list" :href="route('staff.waitlist.index')" :current="request()->routeIs('staff.waitlist.*')" wire:navigate class="[&_*[data-slot=icon]]:text-fuchsia-600">{{ __('Waitlist') }}</flux:navlist.item>
                 </flux:navlist.group>
 
                 <flux:navlist.group :heading="__('People')" class="grid mt-2">
@@ -41,7 +39,6 @@
                 </flux:navlist.group>
 
                 <flux:navlist.group :heading="__('Records')" class="grid mt-2">
-                        <flux:navlist.item icon="document-duplicate" :href="route('staff.record-requests.index')" :current="request()->routeIs('staff.record-requests.*')" wire:navigate class="[&_*[data-slot=icon]]:text-violet-600">{{ __('Record Requests') }}</flux:navlist.item>
                 </flux:navlist.group>
                 @endif
                 @if(auth()->check() && (auth()->user()->role ?? null) === 'admin')
@@ -50,13 +47,14 @@
                         <flux:navlist.item icon="calendar-days" :href="route('admin.appointments.index')" :current="request()->routeIs('admin.appointments.*')" wire:navigate>{{ __('Appointments') }}</flux:navlist.item>
                         <flux:navlist.item icon="users" :href="route('admin.patients.index')" :current="request()->routeIs('admin.patients.index')" wire:navigate>{{ __('Patients') }}</flux:navlist.item>
                         <flux:navlist.item icon="user-group" :href="route('admin.staff.index')" :current="request()->routeIs('admin.staff.*')" wire:navigate>{{ __('Manage Staff') }}</flux:navlist.item>
-                        <flux:navlist.item icon="rectangle-stack" :href="route('admin.visit-types.index')" :current="request()->routeIs('admin.visit-types.*')" wire:navigate>{{ __('Visit Types') }}</flux:navlist.item>
                 </flux:navlist.group>
                 @endif
 
                 @if(auth()->check() && (auth()->user()->role ?? null) === 'patient')
                 <flux:navlist.group :heading="__('Child Health')" class="grid mt-2">
                     <flux:navlist.item icon="document-text" :href="route('client.medical-history')" :current="request()->routeIs('client.medical-history')" wire:navigate class="[&_*[data-slot=icon]]:text-rose-600">{{ __('Medical History') }}</flux:navlist.item>
+                    <!-- New client prescriptions link -->
+                    <flux:navlist.item icon="clipboard-document-list" :href="route('client.prescriptions')" :current="request()->routeIs('client.prescriptions')" wire:navigate class="[&_*[data-slot=icon]]:text-violet-600">{{ __('Prescriptions') }}</flux:navlist.item>
                     <flux:navlist.item icon="document-duplicate" :href="route('client.records-request')" :current="request()->routeIs('client.records-request')" wire:navigate class="[&_*[data-slot=icon]]:text-rose-600">{{ __('Records Request') }}</flux:navlist.item>
                     <flux:navlist.item icon="phone" :href="route('client.contact-info')" :current="request()->routeIs('client.contact-info')" wire:navigate class="[&_*[data-slot=icon]]:text-indigo-600">{{ __('Contact Info') }}</flux:navlist.item>
                     <flux:navlist.item icon="calendar-days" :href="route('client.appointments.history')" :current="request()->routeIs('client.appointments.history')" wire:navigate class="[&_*[data-slot=icon]]:text-emerald-600">{{ __('Appointment History') }}</flux:navlist.item>

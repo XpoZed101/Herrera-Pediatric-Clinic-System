@@ -24,6 +24,8 @@
                 <flux:navlist.group :heading="__('Platform')" class="grid">
                         <flux:navlist.item icon="layout-grid" :href="route('staff.welcome')" :current="request()->routeIs('staff.welcome')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
                         <flux:navlist.item icon="calendar-days" :href="route('staff.appointments.index')" :current="request()->routeIs('staff.appointments.*')" wire:navigate>{{ __('Appointments') }}</flux:navlist.item>
+                        <flux:navlist.item icon="queue-list" :href="route('staff.queue.index')" :current="request()->routeIs('staff.queue.*')" wire:navigate>{{ __('Queue') }}</flux:navlist.item>
+                        <flux:navlist.item icon="clipboard-document-list" :href="route('staff.waitlist.index')" :current="request()->routeIs('staff.waitlist.*')" wire:navigate>{{ __('Waitlist') }}</flux:navlist.item>
                         <flux:navlist.item icon="users" :href="route('staff.patients.index')" :current="request()->routeIs('staff.patients.*')" wire:navigate>{{ __('Patients') }}</flux:navlist.item>
                         <flux:navlist.item icon="credit-card" :href="route('staff.billing.index')" :current="request()->routeIs('staff.billing.*')" wire:navigate>{{ __('Billing') }}</flux:navlist.item>
                         <flux:navlist.item icon="phone" :href="route('staff.phone-inquiries.index')" :current="request()->routeIs('staff.phone-inquiries.*')" wire:navigate>{{ __('Phone Inquiries') }}</flux:navlist.item>

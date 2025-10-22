@@ -98,6 +98,16 @@ Route::post('/appointments/{appointment}/email', [\App\Http\Controllers\Staff\Ap
         Route::get('/phone-inquiries/{phoneInquiry}', [\App\Http\Controllers\Staff\PhoneInquiryController::class, 'show'])->name('phone-inquiries.show')->whereNumber('phoneInquiry');
         Route::post('/phone-inquiries/{phoneInquiry}/status', [\App\Http\Controllers\Staff\PhoneInquiryController::class, 'updateStatus'])->name('phone-inquiries.update-status')->whereNumber('phoneInquiry');
         Route::post('/phone-inquiries/{phoneInquiry}/convert-to-appointment', [\App\Http\Controllers\Staff\PhoneInquiryController::class, 'convertToAppointment'])->name('phone-inquiries.convert-to-appointment')->whereNumber('phoneInquiry');
+
+        // Queue management
+        Route::get('/queue', [\App\Http\Controllers\Staff\QueueController::class, 'index'])->name('queue.index');
+        Route::post('/queue/reorder', [\App\Http\Controllers\Staff\QueueController::class, 'reorder'])->name('queue.reorder');
+
+        // Waitlist management
+        Route::get('/waitlist', [\App\Http\Controllers\Staff\WaitlistController::class, 'index'])->name('waitlist.index');
+        Route::post('/waitlist', [\App\Http\Controllers\Staff\WaitlistController::class, 'store'])->name('waitlist.store');
+        Route::post('/waitlist/{entry}/status', [\App\Http\Controllers\Staff\WaitlistController::class, 'updateStatus'])->name('waitlist.update-status')->whereNumber('entry');
+        Route::delete('/waitlist/{entry}', [\App\Http\Controllers\Staff\WaitlistController::class, 'destroy'])->name('waitlist.destroy')->whereNumber('entry');
     });
 
     // Grouped admin routes

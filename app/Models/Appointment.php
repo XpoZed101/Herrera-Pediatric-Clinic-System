@@ -34,6 +34,8 @@ class Appointment extends Model
         'trouble_breathing',
         'symptom_other',
         'reschedule_count',
+        // queue management
+        'queue_position',
     ];
 
     protected $casts = [
@@ -52,6 +54,8 @@ class Appointment extends Model
         'headaches' => 'boolean',
         'trouble_breathing' => 'boolean',
         'reschedule_count' => 'integer',
+        // queue management
+        'queue_position' => 'integer',
     ];
 
 

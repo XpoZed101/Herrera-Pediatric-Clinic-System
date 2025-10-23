@@ -110,11 +110,7 @@ Route::post('/appointments/{appointment}/email', [\App\Http\Controllers\Staff\Ap
         Route::post('/waitlist/{entry}/status', [\App\Http\Controllers\Staff\WaitlistController::class, 'updateStatus'])->name('waitlist.update-status')->whereNumber('entry');
         Route::delete('/waitlist/{entry}', [\App\Http\Controllers\Staff\WaitlistController::class, 'destroy'])->name('waitlist.destroy')->whereNumber('entry');
 
-        // Record requests management
-        Route::get('/record-requests', [\App\Http\Controllers\Staff\RecordRequestController::class, 'index'])->name('record-requests.index');
-        Route::get('/record-requests/{recordRequest}', [\App\Http\Controllers\Staff\RecordRequestController::class, 'show'])->name('record-requests.show')->whereNumber('recordRequest');
-        Route::post('/record-requests/{recordRequest}/status', [\App\Http\Controllers\Staff\RecordRequestController::class, 'updateStatus'])->name('record-requests.update-status')->whereNumber('recordRequest');
-        Route::post('/record-requests/{recordRequest}/release', [\App\Http\Controllers\Staff\RecordRequestController::class, 'release'])->name('record-requests.release')->whereNumber('recordRequest');
+
     });
 
     // Grouped admin routes
@@ -235,7 +231,5 @@ Route::middleware(['auth'])->prefix('client')->name('client.')->group(function (
     Route::get('/contact-info', [ClientPatientController::class, 'contactInfo'])->name('contact-info');
     Route::put('/contact-info', [ClientPatientController::class, 'updateContactInfo'])->name('contact-info.update');
 
-    // Medical records request
-    Route::get('/medical-records/request', [ClientPatientController::class, 'recordsRequestForm'])->name('records-request');
-    Route::post('/medical-records/request', [ClientPatientController::class, 'recordsRequestSubmit'])->name('records-request.submit');
+
 });

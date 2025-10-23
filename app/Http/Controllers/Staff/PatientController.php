@@ -49,4 +49,27 @@ class PatientController extends Controller
         $patient->load(['guardian', 'emergencyContact']);
         return view('staff.patients.show', compact('patient'));
     }
+
+    public function edit(Patient $patient): View
+    {
+        abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'staff', 403);
+        return view('staff.patients.edit', compact('patient'));
+    }
+
+    public function update(Request $request, Patient $patient): RedirectResponse
+    {
+        abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'staff', 403);
+
+        $validated = $request->validate([
+            'child_name' => ['required', 'string', 'max:255'],
+            'date_of_birth' => ['required', 'date'],
+            'age' => ['nullable', 'integer', 'min:0', 'max:150'],
+            'sex' => ['required', 'in:male,female'],
+        ]);
+
+        $patient->update($validated);
+
+        return redirect()->route('staff.patients.show', $patient)
+            ->with('status', __('Patient demographics updated successfully.'));
+    }
 }

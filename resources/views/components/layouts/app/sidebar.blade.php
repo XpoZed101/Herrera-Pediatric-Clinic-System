@@ -27,10 +27,13 @@
                 <flux:navlist.group :heading="__('Visits')" class="grid mt-2">
                         <flux:navlist.item icon="calendar-days" :href="route('staff.appointments.index')" :current="request()->routeIs('staff.appointments.*')" wire:navigate class="[&_*[data-slot=icon]]:text-emerald-600">{{ __('Appointments') }}</flux:navlist.item>
                         <flux:navlist.item icon="queue-list" :href="route('staff.queue.index')" :current="request()->routeIs('staff.queue.*')" wire:navigate class="[&_*[data-slot=icon]]:text-sky-600">{{ __('Queue') }}</flux:navlist.item>
+                        <flux:navlist.item icon="clock" :href="route('staff.waitlist.index')" :current="request()->routeIs('staff.waitlist.*')" wire:navigate class="[&_*[data-slot=icon]]:text-sky-600">{{ __('Waitlist') }}</flux:navlist.item>
                 </flux:navlist.group>
 
                 <flux:navlist.group :heading="__('People')" class="grid mt-2">
-                        <flux:navlist.item icon="users" :href="route('staff.patients.index')" :current="request()->routeIs('staff.patients.*')" wire:navigate class="[&_*[data-slot=icon]]:text-rose-600">{{ __('Patients') }}</flux:navlist.item>
+
+                        <!-- Added Demographics quick link -->
+                        <flux:navlist.item icon="identification" :href="route('staff.patients.index')" :current="request()->routeIs('staff.patients.*')" wire:navigate class="[&_*[data-slot=icon]]:text-emerald-600">{{ __('Demographics') }}</flux:navlist.item>
                         <flux:navlist.item icon="phone" :href="route('staff.phone-inquiries.index')" :current="request()->routeIs('staff.phone-inquiries.*')" wire:navigate class="[&_*[data-slot=icon]]:text-indigo-600">{{ __('Phone Inquiries') }}</flux:navlist.item>
                 </flux:navlist.group>
 

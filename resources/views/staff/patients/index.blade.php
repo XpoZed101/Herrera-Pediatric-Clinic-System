@@ -7,9 +7,7 @@
                     <a href="{{ route('staff.patients.index') }}" class="inline-flex items-center justify-center rounded-md p-1.5 hover:bg-neutral-200 dark:hover:bg-neutral-700" title="Refresh" wire:navigate>
                         <flux:icon.arrow-path variant="mini" />
                     </a>
-                    <a href="{{ route('staff.patients.create') }}" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 text-white px-3 py-1 hover:bg-blue-700" wire:navigate>
-                        <flux:icon.user-plus variant="mini" /> {{ __('Register Patient') }}
-                    </a>
+
                 </div>
             </div>
 
@@ -32,9 +30,14 @@
                                 <td class="px-3 py-2">{{ $patient->age ?? \Carbon\Carbon::parse($patient->date_of_birth)->age }}</td>
                                 <td class="px-3 py-2 capitalize">{{ $patient->sex }}</td>
                                 <td class="px-3 py-2">
-                                    <a href="{{ route('staff.patients.show', $patient) }}" class="inline-flex items-center gap-2 rounded-lg bg-neutral-900 text-white px-3 py-1 hover:bg-neutral-700" wire:navigate>
-                                        <flux:icon.eye variant="mini" /> {{ __('View') }}
-                                    </a>
+                                    <div class="inline-flex items-center gap-2">
+                                        <a href="{{ route('staff.patients.show', $patient) }}" class="inline-flex items-center gap-2 rounded-lg bg-neutral-900 text-white px-3 py-1 hover:bg-neutral-700" wire:navigate>
+                                            <flux:icon.eye variant="mini" /> {{ __('View') }}
+                                        </a>
+                                        <a href="{{ route('staff.patients.edit', $patient) }}" class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 text-white px-3 py-1 hover:bg-emerald-700" wire:navigate>
+                                            <flux:icon.pencil-square variant="mini" /> {{ __('Edit') }}
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         @empty

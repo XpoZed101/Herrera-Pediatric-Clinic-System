@@ -87,6 +87,8 @@ Route::post('/appointments/{appointment}/email', [\App\Http\Controllers\Staff\Ap
         Route::get('/patients/create', [\App\Http\Controllers\Staff\PatientController::class, 'create'])->name('patients.create');
         Route::post('/patients', [\App\Http\Controllers\Staff\PatientController::class, 'store'])->name('patients.store');
         Route::get('/patients/{patient}', [\App\Http\Controllers\Staff\PatientController::class, 'show'])->name('patients.show')->whereNumber('patient');
+        Route::get('/patients/{patient}/edit', [\App\Http\Controllers\Staff\PatientController::class, 'edit'])->name('patients.edit')->whereNumber('patient');
+        Route::put('/patients/{patient}', [\App\Http\Controllers\Staff\PatientController::class, 'update'])->name('patients.update')->whereNumber('patient');
 
         // Reports (PDF)
         Route::get('/reports/appointments/pdf', [\App\Http\Controllers\Staff\ReportController::class, 'appointmentsPdf'])->name('reports.appointments.pdf');

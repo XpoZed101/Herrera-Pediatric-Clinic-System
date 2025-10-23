@@ -10,6 +10,9 @@
                     <a href="{{ route('staff.patients.create') }}" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 text-white px-3 py-1 hover:bg-blue-700" wire:navigate>
                         <flux:icon.user-plus variant="mini" /> {{ __('Register Patient') }}
                     </a>
+                    <a href="{{ route('staff.patients.edit', $patient) }}" class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 text-white px-3 py-1 hover:bg-emerald-700" wire:navigate>
+                        <flux:icon.pencil-square variant="mini" /> {{ __('Edit Demographics') }}
+                    </a>
                 </div>
             </div>
 

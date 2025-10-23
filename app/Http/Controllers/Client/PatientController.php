@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\RecordRequest;
 use App\Models\Prescription; // Added
+use Illuminate\Support\Facades\Mail;
 
 class PatientController extends Controller
 {
@@ -567,6 +568,81 @@ class PatientController extends Controller
         ])->setPaper('a4');
 
         return $pdf->download('medical-clearance-' . $filenameBase . '-' . $datePart . '.pdf');
+    }
+
+
+    /**
+     * Show the Message Clinic page for non-urgent queries.
+     */
+    public function messages(): View
+    {
+        $user = Auth::user();
+        $guardian = null;
+        $patient = null;
+
+        if ($user) {
+            $guardian = Guardian::where('email', $user->email)->first();
+            $patient = $guardian?->patient;
+        }
+
+        $patient = $patient ?? Patient::query()->first();
+
+        return view('client.messages', [
+            'user' => $user,
+            'guardian' => $guardian,
+            'patient' => $patient,
+        ]);
+    }
+
+    /**
+     * Handle sending a non-urgent message to the clinic.
+     */
+    public function sendMessage(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'subject' => ['nullable', 'string', 'max:120'],
+            'message' => ['required', 'string', 'min:10', 'max:2000'],
+        ]);
+
+        $user = $request->user();
+        $guardian = null;
+        $patient = null;
+
+        if ($user) {
+            $guardian = Guardian::where('email', $user->email)->first();
+            $patient = $guardian?->patient;
+        }
+
+        $patient = $patient ?? Patient::query()->first();
+
+        $recipient = env('CLINIC_CONTACT_EMAIL', config('mail.from.address'));
+        $subject = trim($validated['subject'] ?? '') ?: 'Non-urgent patient inquiry';
+
+        $guardianName = optional($guardian)->name ?? ($user->name ?? 'Unknown');
+        $guardianEmail = $user->email ?? (optional($guardian)->email ?? 'Unknown');
+        $guardianPhone = optional($guardian)->phone ?? '—';
+        $childName = optional($patient)->child_name ?? '—';
+
+        $body = "A new non-urgent message was submitted via the clinic portal.\n\n" .
+            "Guardian: {$guardianName}\n" .
+            "Email: {$guardianEmail}\n" .
+            "Phone: {$guardianPhone}\n" .
+            "Child: {$childName}\n\n" .
+            "Message:\n" . $validated['message'] . "\n\n" .
+            "— Sent from Pediatric Clinic portal";
+
+        try {
+            Mail::raw($body, function ($m) use ($recipient, $subject) {
+                $m->to($recipient)->subject('Clinic Inquiry: ' . $subject);
+            });
+
+            return redirect()->route('client.messages')
+                ->with('status', __('Message sent! The clinic will reply to your email within 1–2 days.'));
+        } catch (\Throwable $e) {
+            return redirect()->route('client.messages')
+                ->with('status', __('Failed to send message: ') . $e->getMessage())
+                ->withInput();
+        }
     }
 }
 

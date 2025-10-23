@@ -240,5 +240,9 @@ Route::middleware(['auth'])->prefix('client')->name('client.')->group(function (
     Route::get('/contact-info', [ClientPatientController::class, 'contactInfo'])->name('contact-info');
     Route::put('/contact-info', [ClientPatientController::class, 'updateContactInfo'])->name('contact-info.update');
 
+    // Messaging: non-urgent queries to clinic
+    Route::get('/messages', [ClientPatientController::class, 'messages'])->name('messages');
+    Route::post('/messages', [ClientPatientController::class, 'sendMessage'])->name('messages.send');
+
 
 });

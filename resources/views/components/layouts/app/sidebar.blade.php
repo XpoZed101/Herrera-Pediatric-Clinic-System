@@ -66,6 +66,11 @@
                     <flux:navlist.item icon="phone" :href="route('client.contact-info')" :current="request()->routeIs('client.contact-info')" wire:navigate class="[&_*[data-slot=icon]]:text-indigo-600">{{ __('Contact Info') }}</flux:navlist.item>
                 </flux:navlist.group>
 
+                <!-- New: Support / Messaging -->
+                <flux:navlist.group :heading="__('Support')" class="grid mt-2">
+                    <flux:navlist.item icon="chat-bubble-left-right" :href="route('client.messages')" :current="request()->routeIs('client.messages')" wire:navigate class="[&_*[data-slot=icon]]:text-fuchsia-600">{{ __('Message Clinic') }}</flux:navlist.item>
+                </flux:navlist.group>
+
                 <flux:navlist.group :heading="__('Visits')" class="grid mt-2">
                     <flux:navlist.item icon="calendar-days" :href="route('client.appointments.history')" :current="request()->routeIs('client.appointments.history')" wire:navigate class="[&_*[data-slot=icon]]:text-emerald-600">{{ __('Appointment History') }}</flux:navlist.item>
                 </flux:navlist.group>

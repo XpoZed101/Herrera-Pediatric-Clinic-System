@@ -69,6 +69,61 @@
                     </form>
                 @endif
             </div>
+
+            @if($appointment->medicalRecord)
+                @php
+                    $meds = optional($appointment->medicalRecord->prescriptions)->where('type', 'medication');
+                @endphp
+                <div class="mt-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-semibold tracking-tight">Medications To Dispense</h3>
+                        <span class="inline-flex items-center rounded-md bg-neutral-100 dark:bg-neutral-800 px-2 py-0.5 text-xs text-neutral-700 dark:text-neutral-200">{{ $meds->count() }} total</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        @forelse($meds as $p)
+                            @php $erxSubmitted = $p->erx_enabled && ($p->erx_status === 'submitted'); @endphp
+                            <div class="rounded-lg border border-neutral-200 dark:border-neutral-700 p-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-medium">{{ $p->name }}</span>
+                                    @if($p->status)
+                                        <span class="inline-flex items-center rounded-md bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 px-2 py-0.5 text-xs">{{ ucfirst($p->status) }}</span>
+                                    @endif
+                                    @if($p->erx_enabled)
+                                        <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs {{ $erxSubmitted ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-200' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-200' }}">
+                                            eRx: {{ $p->erx_status ? ucfirst($p->erx_status) : 'Enabled' }}
+                                        </span>
+                                    @endif
+                                </div>
+                                <div class="mt-2 text-xs text-neutral-600 dark:text-neutral-300">
+                                    {{ $p->dosage }} • {{ $p->frequency }} • {{ $p->route }}
+                                </div>
+                                @if($p->instructions)
+                                    <div class="mt-2 text-sm text-neutral-700 dark:text-neutral-300 whitespace-pre-line">{{ $p->instructions }}</div>
+                                @endif
+                                @if($p->start_date || $p->end_date)
+                                    <div class="mt-2 text-xs text-neutral-600 dark:text-neutral-300">
+                                        Start–End: {{ optional($p->start_date)->format('Y-m-d') ?? '—' }} to {{ optional($p->end_date)->format('Y-m-d') ?? '—' }}
+                                    </div>
+                                @endif
+                                <div class="mt-2 text-xs text-neutral-700 dark:text-neutral-300">
+                                    @if($erxSubmitted)
+                                        Dispense at pharmacy: {{ $p->erx_pharmacy ?? '—' }}. Do not handover in‑clinic.
+                                    @elseif(in_array(($p->status ?? ''), ['held','cancelled']))
+                                        Do not dispense ({{ ucfirst($p->status) }}).
+                                    @else
+                                        Dispense in‑clinic as prescribed.
+                                    @endif
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-neutral-600 dark:text-neutral-300">No medications to dispense.</div>
+                        @endforelse
+                    </div>
+                </div>
+            @else
+                <div class="mt-6 text-neutral-600 dark:text-neutral-300">No medical record linked; prescriptions unavailable.</div>
+            @endif
+
         </div>
     </div>
 </x-layouts.app>

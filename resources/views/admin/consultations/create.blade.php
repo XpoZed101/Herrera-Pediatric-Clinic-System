@@ -9,18 +9,18 @@
             </div>
         </div>
 
-        <div class="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-zinc-900 p-4">
+        <div class="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-zinc-900 p-4 shadow-sm">
             <form method="POST" action="{{ route('admin.patients.consultations.store', $patient) }}">
                 @csrf
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium mb-1">Conducted At</label>
-                        <input type="datetime-local" name="conducted_at" class="w-full rounded-md border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900" />
+                        <input type="datetime-local" name="conducted_at" class="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">Visit Type</label>
-                        <select id="visit_type" name="visit_type" class="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-3 py-2" required>
+                        <select id="visit_type" name="visit_type" class="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
                             <option value="" disabled @selected(!old('visit_type'))>Select a visit type</option>
                             @foreach($visitTypes as $type)
                                 <option value="{{ $type->slug }}" @selected(old('visit_type') === $type->slug)>{{ $type->name }}</option>
@@ -31,29 +31,29 @@
 
                 <div class="mt-4">
                     <label class="block text-sm font-medium mb-1">Chief Complaint</label>
-                    <textarea name="chief_complaint" rows="3" class="w-full rounded-md border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900"></textarea>
+                    <textarea name="chief_complaint" rows="3" class="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
                 </div>
 
                 <div class="mt-4">
                     <label class="block text-sm font-medium mb-1">Examination Findings</label>
-                    <textarea name="examination" rows="4" class="w-full rounded-md border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900"></textarea>
+                    <textarea name="examination" rows="4" class="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
                 </div>
 
                 <div class="mt-4">
                     <label class="block text-sm font-medium mb-1">Diagnosis</label>
-                    <textarea name="diagnosis" rows="3" class="w-full rounded-md border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900"></textarea>
+                    <textarea name="diagnosis" rows="3" class="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
                 </div>
 
                 <div class="mt-4">
                     <label class="block text-sm font-medium mb-1">Plan</label>
-                    <textarea name="plan" rows="3" class="w-full rounded-md border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900"></textarea>
+                    <textarea name="plan" rows="3" class="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
                 </div>
 
                 
 
                 <div class="mt-4">
                     <label class="block text-sm font-medium mb-1">Additional Notes</label>
-                    <textarea name="notes" rows="3" class="w-full rounded-md border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900"></textarea>
+                    <textarea name="notes" rows="3" class="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
                 </div>
 
                 <div class="mt-6">

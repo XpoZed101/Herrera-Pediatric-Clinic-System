@@ -190,6 +190,10 @@ Route::post('/appointments/{appointment}/email', [\App\Http\Controllers\Staff\Ap
         Route::get('/patients/{patient}/consultations/create', [AdminConsultationController::class, 'create'])->name('patients.consultations.create');
         Route::post('/patients/{patient}/consultations', [AdminConsultationController::class, 'store'])->name('patients.consultations.store');
 
+        // Consultations index and start
+        Route::get('/consultations', [AdminConsultationController::class, 'index'])->name('consultations.index');
+        Route::post('/consultations/start', [AdminConsultationController::class, 'start'])->name('consultations.start');
+
         // Visit types management
         Route::resource('/visit-types', AdminVisitTypeController::class);
     });

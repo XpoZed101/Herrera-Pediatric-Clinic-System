@@ -1,6 +1,6 @@
 <x-layouts.app :title="__('Appointments')">
     <div id="admin-appointments-page" data-status-updated="{{ session('status_updated') }}" data-email-sent="{{ session('email_sent') }}" class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
-        <div class="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-zinc-900 p-4">
+        <div class="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-zinc-900 p-4 shadow-sm">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-semibold">Appointments</h2>
                 <div class="flex items-center gap-2">
@@ -75,7 +75,7 @@
                                         @endif
                                         <form method="POST" action="{{ route('admin.appointments.update-status', $appointment) }}" class="inline-flex items-center gap-2">
                                             @csrf
-                                            <select name="status" class="rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-800 px-2 py-1 text-sm">
+                                            <select name="status" class="rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-800 px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                                 @foreach(['requested','scheduled','completed','cancelled'] as $opt)
                                                     <option value="{{ $opt }}" @selected(($appointment->status ?? 'requested') === $opt)>{{ ucfirst($opt) }}</option>
                                                 @endforeach

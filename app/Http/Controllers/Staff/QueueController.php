@@ -16,6 +16,8 @@ class QueueController extends Controller
 
         $appointments = Appointment::with(['patient', 'user'])
             ->whereDate('scheduled_at', today())
+            // Exclude cancelled appointments from today's queue
+            ->where('status', '!=', 'cancelled')
             ->where(function ($q) {
                 $q->whereNull('checked_out_at');
             })
@@ -51,7 +53,7 @@ class QueueController extends Controller
             $maxPosition = Appointment::whereDate('scheduled_at', today())
                 ->whereNull('checked_out_at')
                 ->max('queue_position');
-            $appointment->queue_position = is_numeric($maxPosition) ? ((int)$maxPosition + 1) : 1;
+            $appointment->queue_position = is_numeric($maxPosition) ? ((int) $maxPosition + 1) : 1;
             $appointment->save();
         }
 

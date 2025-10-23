@@ -63,6 +63,12 @@
                                         <a href="{{ route('admin.prescriptions.create', ['medical_record_id' => $record->id]) }}" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 text-white px-3 py-1 hover:bg-blue-700" title="Create Prescription" wire:navigate>
                                             <flux:icon.document-plus variant="mini" /> Add Prescription
                                         </a>
+                                        <a href="{{ route('admin.medical-records.certificate.pdf', $record) }}" target="_blank" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 text-white px-3 py-1 hover:bg-blue-700" title="Certificate PDF">
+                                            <flux:icon.document-text variant="mini" /> Certificate PDF
+                                        </a>
+                                        <a href="{{ route('admin.medical-records.clearance.pdf', $record) }}" target="_blank" class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 text-white px-3 py-1 hover:bg-indigo-700" title="Clearance PDF">
+                                            <flux:icon.document-text variant="mini" /> Clearance PDF
+                                        </a>
                                     </div>
                                 </td>
                             </tr>

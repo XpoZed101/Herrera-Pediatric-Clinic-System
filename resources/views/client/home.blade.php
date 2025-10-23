@@ -39,6 +39,14 @@
                     <span class="font-medium">Records</span>
                 </div>
                 <p class="text-neutral-600 dark:text-neutral-300 text-sm">Access immunizations, allergies, and past conditions.</p>
+                <div class="mt-3 flex flex-wrap gap-2">
+                    <a href="{{ route('client.certificates') }}" class="inline-flex items-center gap-2 rounded-md bg-indigo-600 text-white px-3 py-2 hover:bg-indigo-700" title="{{ __('View Certificates') }}">
+                        <flux:icon.document-text variant="mini" /> {{ __('Certificates') }}
+                    </a>
+                    <a href="{{ route('client.clearances') }}" class="inline-flex items-center gap-2 rounded-md bg-emerald-600 text-white px-3 py-2 hover:bg-emerald-700" title="{{ __('View Clearances') }}">
+                        <flux:icon.shield-check variant="mini" /> {{ __('Clearances') }}
+                    </a>
+                </div>
             </div>
             <div class="rounded-xl border border-neutral-200 dark:border-neutral-700 p-4 bg-white dark:bg-zinc-900">
                 <div class="flex items-center gap-2 mb-2">

@@ -470,5 +470,103 @@ class PatientController extends Controller
 
         return $pdf->download($filename);
     }
+
+    // Client: List medical records for certificate downloads
+    public function certificates(): View
+    {
+        $user = Auth::user();
+        $patient = null;
+
+        if ($user) {
+            $guardian = Guardian::where('email', $user->email)->first();
+            $patient = $guardian?->patient;
+        }
+
+        $patient = $patient ?? Patient::query()->first();
+
+        $medicalRecords = MedicalRecord::with(['appointment.patient', 'appointment.user'])
+            ->where(function ($q) use ($user, $patient) {
+                if ($patient) {
+                    $q->whereHas('appointment', function ($aq) use ($patient) {
+                        $aq->where('patient_id', $patient->id);
+                    });
+                }
+                if ($user) {
+                    $q->orWhere('user_id', $user->id);
+                }
+            })
+            ->latest('conducted_at')
+            ->get();
+
+        return view('client.certificates', compact('patient', 'medicalRecords'));
+    }
+
+    // Client: List medical records for clearance downloads
+    public function clearances(): View
+    {
+        $user = Auth::user();
+        $patient = null;
+
+        if ($user) {
+            $guardian = Guardian::where('email', $user->email)->first();
+            $patient = $guardian?->patient;
+        }
+
+        $patient = $patient ?? Patient::query()->first();
+
+        $medicalRecords = MedicalRecord::with(['appointment.patient', 'appointment.user'])
+            ->where(function ($q) use ($user, $patient) {
+                if ($patient) {
+                    $q->whereHas('appointment', function ($aq) use ($patient) {
+                        $aq->where('patient_id', $patient->id);
+                    });
+                }
+                if ($user) {
+                    $q->orWhere('user_id', $user->id);
+                }
+            })
+            ->latest('conducted_at')
+            ->get();
+
+        return view('client.clearances', compact('patient', 'medicalRecords'));
+    }
+
+    // Client: Generate Certificate PDF for a specific medical record
+    public function certificatePdf(MedicalRecord $medicalRecord)
+    {
+        $medicalRecord->load(['appointment.patient', 'appointment.user', 'diagnoses']);
+        $issuer = $medicalRecord->appointment->user ?? $medicalRecord->user;
+
+        $name = optional($medicalRecord->appointment->patient)->child_name;
+        $filenameBase = $name ? str_replace(' ', '-', strtolower($name)) : 'record';
+        $datePart = optional($medicalRecord->conducted_at)->format('Y-m-d') ?? now()->format('Y-m-d');
+
+        $pdf = Pdf::loadView('admin.documents.certificate', [
+            'record' => $medicalRecord,
+            'issuer' => $issuer,
+            'appName' => config('app.name', 'Pediatric Clinic'),
+        ])->setPaper('a4');
+
+        return $pdf->download('medical-certificate-' . $filenameBase . '-' . $datePart . '.pdf');
+    }
+
+    // Client: Generate Clearance PDF for a specific medical record
+    public function clearancePdf(MedicalRecord $medicalRecord)
+    {
+        $medicalRecord->load(['appointment.patient', 'appointment.user']);
+        $issuer = $medicalRecord->appointment->user ?? $medicalRecord->user;
+
+        $name = optional($medicalRecord->appointment->patient)->child_name;
+        $filenameBase = $name ? str_replace(' ', '-', strtolower($name)) : 'record';
+        $datePart = optional($medicalRecord->conducted_at)->format('Y-m-d') ?? now()->format('Y-m-d');
+
+        $pdf = Pdf::loadView('admin.documents.clearance', [
+            'record' => $medicalRecord,
+            'issuer' => $issuer,
+            'appName' => config('app.name', 'Pediatric Clinic'),
+        ])->setPaper('a4');
+
+        return $pdf->download('medical-clearance-' . $filenameBase . '-' . $datePart . '.pdf');
+    }
 }
 

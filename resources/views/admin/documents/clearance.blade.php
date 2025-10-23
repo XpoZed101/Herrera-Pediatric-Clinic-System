@@ -5,30 +5,38 @@
     <title>{{ $appName ?? 'Pediatric Clinic' }} — Medical Clearance #{{ $record->id }}</title>
     <style>
         @page { margin: 48px 48px; }
-        body { font-family: DejaVu Sans, -apple-system, Segoe UI, Arial, sans-serif; color: #0f172a; }
-        .letterhead { display:flex; align-items:center; justify-content:space-between; border-bottom: 4px solid #6366f1; padding-bottom: 14px; }
+        :root {
+            --primary: #6366f1; /* indigo-500 */
+            --accent: #0ea5e9; /* sky-500 */
+            --text: #0f172a; /* slate-900 */
+            --muted: #64748b; /* slate-500 */
+            --border: #cbd5e1; /* slate-300 */
+        }
+        body { font-family: DejaVu Sans, -apple-system, Segoe UI, Arial, sans-serif; color: var(--text); }
+        .header { display:flex; align-items:center; justify-content:space-between; background: linear-gradient(90deg, var(--primary), var(--accent)); color:#fff; padding: 16px 18px; border-radius: 12px; }
         .brand { display:flex; align-items:center; gap:12px; }
-        .brand-title { font-size: 26px; font-weight: 800; color: #6366f1; }
-        .brand-sub { font-size: 12px; color:#475569; }
-        .clinic-meta { text-align:right; font-size: 11px; color:#334155; }
-        .watermark { position: fixed; top: 38%; right: 10%; font-size: 68px; color: rgba(99,102,241,0.08); transform: rotate(18deg); font-weight: 800; letter-spacing: 2px; }
-        .title { margin: 18px 0 6px; font-weight: 700; font-size: 18px; letter-spacing: .5px; color:#0f172a; }
-        .meta-row { display:flex; gap:16px; font-size: 12px; margin-top: 8px; }
-        .meta-row > div { flex:1; }
-        .card { margin-top: 14px; border: 1px solid #cbd5e1; border-radius: 10px; padding: 16px; background: #ffffff; }
-        .card h4 { margin: 0 0 8px; font-size: 13px; color:#6366f1; text-transform: uppercase; letter-spacing: .5px; }
-        .muted { color:#64748b; }
+        .brand-title { font-size: 26px; font-weight: 800; letter-spacing: .4px; }
+        .brand-sub { font-size: 12px; opacity: .9; }
+        .clinic-meta { text-align:right; font-size: 11px; opacity: .9; }
+        .watermark { position: fixed; top: 40%; right: 12%; font-size: 68px; color: rgba(99,102,241,0.07); transform: rotate(16deg); font-weight: 800; letter-spacing: 2px; }
+        .title { margin: 18px 0 6px; font-weight: 800; font-size: 22px; letter-spacing: .5px; color:#0f172a; }
+        .chips { display:flex; gap:8px; flex-wrap:wrap; margin-top: 8px; }
+        .chip { display:inline-flex; align-items:center; gap:6px; font-size: 11px; color:#1e3a8a; background:#eef2ff; border:1px solid #c7d2fe; border-radius: 999px; padding: 6px 10px; }
+        .chip .dot { width:8px; height:8px; border-radius:999px; background:#c7d2fe; }
+        .section { margin-top: 14px; border: 1px solid var(--border); border-radius: 12px; padding: 16px; background: #ffffff; }
+        .section h4 { margin: 0 0 8px; font-size: 13px; color: var(--primary); text-transform: uppercase; letter-spacing: .5px; }
+        .muted { color: var(--muted); }
         .grid-two { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .signature-block { margin-top: 24px; display:flex; justify-content:flex-end; }
         .sig-line { width: 240px; border-top: 1px solid #94a3b8; text-align:center; padding-top: 6px; font-size: 12px; color:#334155; }
         .verify { margin-top: 10px; font-size: 11px; color:#475569; }
         .footer { position: fixed; bottom: 24px; left: 48px; right: 48px; font-size: 11px; color: #64748b; }
-        .wave { height: 4px; background: linear-gradient(90deg, #6366f1, #0ea5e9, #6b7280); border-radius: 2px; margin-top: 8px; }
+        .wave { height: 4px; background: linear-gradient(90deg, var(--primary), var(--accent), #6b7280); border-radius: 2px; margin-top: 8px; }
     </style>
-    </head>
+</head>
 <body>
     <div class="watermark">{{ $appName ?? 'Pediatric Clinic' }}</div>
-    <div class="letterhead">
+    <div class="header">
         <div class="brand">
             <div class="brand-title">{{ $appName ?? 'Pediatric Clinic' }}</div>
             <div class="brand-sub">Creating care for a lifetime</div>
@@ -40,14 +48,13 @@
     </div>
 
     <div class="title">Medical Clearance</div>
-
-    <div class="meta-row">
-        <div>Patient: <strong>{{ optional($record->appointment->user)->name ?? '—' }}</strong></div>
-        <div>Issued: <strong>{{ now()->format('Y-m-d') }}</strong></div>
-        <div>Document ID: <strong>{{ strtoupper(substr(md5(($record->id ?? 0).'|'.(optional($record->conducted_at)->format('Ymd') ?? 'N/A')), 0, 10)) }}</strong></div>
+    <div class="chips">
+        <div class="chip"><span class="dot"></span> Issued: <strong>{{ now()->format('Y-m-d') }}</strong></div>
+        <div class="chip"><span class="dot"></span> Document ID: <strong>{{ strtoupper(substr(md5(($record->id ?? 0).'|'.(optional($record->conducted_at)->format('Ymd') ?? 'N/A')), 0, 10)) }}</strong></div>
+        <div class="chip"><span class="dot" style="background:#34d399"></span> Patient: <strong>{{ optional($record->appointment->user)->name ?? '—' }}</strong></div>
     </div>
 
-    <div class="card">
+    <div class="section">
         <h4>Fitness Declaration</h4>
         <p style="margin:0 0 10px; line-height:1.65;">
             After clinical evaluation, <strong>{{ optional($record->appointment->user)->name ?? '—' }}</strong> is deemed
@@ -74,7 +81,7 @@
     </div>
 
     <div class="signature-block">
-        <div class="sig-line">Physician Signature — {{ auth()->user()->name ?? '—' }}</div>
+        <div class="sig-line">Physician Signature — {{ optional($issuer)->name ?? '—' }}</div>
     </div>
 
     <div class="footer">

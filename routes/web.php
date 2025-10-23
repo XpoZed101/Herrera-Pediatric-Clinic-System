@@ -222,6 +222,12 @@ Route::middleware(['auth'])->prefix('client')->name('client.')->group(function (
     // PDF download for prescriptions
     Route::get('/prescriptions/pdf', [ClientPatientController::class, 'prescriptionsPdf'])->name('prescriptions.pdf');
 
+    // Client documents: certificates and clearances
+    Route::get('/documents/certificates', [ClientPatientController::class, 'certificates'])->name('certificates');
+    Route::get('/documents/clearances', [ClientPatientController::class, 'clearances'])->name('clearances');
+    Route::get('/medical-records/{medicalRecord}/certificate/pdf', [ClientPatientController::class, 'certificatePdf'])->name('medical-records.certificate.pdf')->whereNumber('medicalRecord');
+    Route::get('/medical-records/{medicalRecord}/clearance/pdf', [ClientPatientController::class, 'clearancePdf'])->name('medical-records.clearance.pdf')->whereNumber('medicalRecord');
+
     // New: Appointment history page
     Route::get('/appointments/history', [ClientPatientController::class, 'appointmentHistory'])->name('appointments.history');
 

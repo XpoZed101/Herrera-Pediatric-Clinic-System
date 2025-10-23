@@ -39,6 +39,7 @@
                 </flux:navlist.group>
 
                 <flux:navlist.group :heading="__('Records')" class="grid mt-2">
+                        <flux:navlist.item icon="beaker" :href="route('staff.inventory.index')" :current="request()->routeIs('staff.inventory.*')" wire:navigate class="[&_*[data-slot=icon]]:text-violet-600">{{ __('Inventory') }}</flux:navlist.item>
                 </flux:navlist.group>
                 @endif
                 @if(auth()->check() && (auth()->user()->role ?? null) === 'admin')

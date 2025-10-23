@@ -110,6 +110,15 @@ Route::post('/appointments/{appointment}/email', [\App\Http\Controllers\Staff\Ap
         Route::post('/waitlist/{entry}/status', [\App\Http\Controllers\Staff\WaitlistController::class, 'updateStatus'])->name('waitlist.update-status')->whereNumber('entry');
         Route::delete('/waitlist/{entry}', [\App\Http\Controllers\Staff\WaitlistController::class, 'destroy'])->name('waitlist.destroy')->whereNumber('entry');
 
+        // Inventory management
+        Route::get('/inventory', [\App\Http\Controllers\Staff\InventoryController::class, 'index'])->name('inventory.index');
+        Route::get('/inventory/create', [\App\Http\Controllers\Staff\InventoryController::class, 'create'])->name('inventory.create');
+        Route::post('/inventory', [\App\Http\Controllers\Staff\InventoryController::class, 'store'])->name('inventory.store');
+        Route::get('/inventory/{item}', [\App\Http\Controllers\Staff\InventoryController::class, 'show'])->name('inventory.show')->whereNumber('item');
+        Route::get('/inventory/{item}/edit', [\App\Http\Controllers\Staff\InventoryController::class, 'edit'])->name('inventory.edit')->whereNumber('item');
+        Route::put('/inventory/{item}', [\App\Http\Controllers\Staff\InventoryController::class, 'update'])->name('inventory.update')->whereNumber('item');
+        Route::post('/inventory/{item}/adjust', [\App\Http\Controllers\Staff\InventoryController::class, 'adjust'])->name('inventory.adjust')->whereNumber('item');
+
 
     });
 

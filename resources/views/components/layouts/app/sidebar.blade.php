@@ -84,6 +84,8 @@
                 <flux:navlist.group :heading="__('Records')" class="grid mt-2 rounded-lg border-l-4 border-violet-600 pl-2 bg-violet-50/40 dark:bg-violet-900/15">
                     <flux:navlist.item icon="document-text" :href="route('admin.medical-records.index')" :current="request()->routeIs('admin.medical-records.*')" wire:navigate class="[&_*[data-slot=icon]]:text-violet-600">{{ __('Medical Records') }}</flux:navlist.item>
                     <flux:navlist.item icon="clipboard-document-list" :href="route('admin.prescriptions.index')" :current="request()->routeIs('admin.prescriptions.*')" wire:navigate class="[&_*[data-slot=icon]]:text-violet-600">{{ __('Prescriptions') }}</flux:navlist.item>
+                    <flux:navlist.item icon="cog-6-tooth" :href="route('admin.visit-types.index')" :current="request()->routeIs('admin.visit-types.*')" wire:navigate class="[&_*[data-slot=icon]]:text-violet-600">{{ __('Visit Types') }}</flux:navlist.item>
+
                 </flux:navlist.group>
                 @endif
             </flux:navlist>

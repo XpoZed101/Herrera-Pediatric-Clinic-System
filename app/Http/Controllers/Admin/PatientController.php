@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Patient;
+use App\Models\Appointment;
+use App\Models\MedicalRecord;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -43,6 +45,21 @@ class PatientController extends Controller
             'currentSymptoms',
             'additionalNote',
         ]);
-        return view('admin.patients.show', compact('patient'));
+
+        // Load medical records tied to this patient via appointments
+        $medicalRecords = MedicalRecord::with(['appointment.user', 'diagnoses'])
+            ->whereHas('appointment', function ($q) use ($patient) {
+                $q->where('patient_id', $patient->id);
+            })
+            ->latest('conducted_at')
+            ->get();
+
+        // Load all appointments for this patient
+        $appointments = Appointment::with(['user', 'medicalRecord'])
+            ->where('patient_id', $patient->id)
+            ->orderBy('scheduled_at', 'desc')
+            ->get();
+
+        return view('admin.patients.show', compact('patient', 'medicalRecords', 'appointments'));
     }
 }

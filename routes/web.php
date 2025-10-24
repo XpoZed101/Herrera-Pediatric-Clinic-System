@@ -239,6 +239,9 @@ Route::middleware(['auth'])->prefix('client')->name('client.')->group(function (
     Route::get('/medical-records/{medicalRecord}/certificate/pdf', [ClientPatientController::class, 'certificatePdf'])->name('medical-records.certificate.pdf')->whereNumber('medicalRecord');
     Route::get('/medical-records/{medicalRecord}/clearance/pdf', [ClientPatientController::class, 'clearancePdf'])->name('medical-records.clearance.pdf')->whereNumber('medicalRecord');
 
+    // New: Visit Summary details page for a specific medical record
+    Route::get('/medical-records/{medicalRecord}/summary', [ClientPatientController::class, 'visitSummary'])->name('medical-records.summary')->whereNumber('medicalRecord');
+
     // New: Appointment history page
     Route::get('/appointments/history', [ClientPatientController::class, 'appointmentHistory'])->name('appointments.history');
 

@@ -153,6 +153,7 @@
                                             <th class="px-3 py-2 text-left">{{ __('Plan') }}</th>
                                             <th class="px-3 py-2 text-left">{{ __('Diagnosis') }}</th>
                                             <th class="px-3 py-2 text-left">{{ __('Notes') }}</th>
+                                            <th class="px-3 py-2 text-left">{{ __('Actions') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-neutral-200 dark:divide-neutral-700">
@@ -184,6 +185,11 @@
                                                 </td>
                                                 <td class="px-3 py-2 text-neutral-800 dark:text-neutral-200 text-xs">
                                                     <span title="{{ $record->notes }}">{!! $wordWrap($record->notes ?? '', 30) ?: '—' !!}</span>
+                                                </td>
+                                                <td class="px-3 py-2 text-neutral-800 dark:text-neutral-200 text-xs whitespace-nowrap">
+                                                    <a href="{{ route('client.medical-records.summary', $record->id) }}" class="inline-flex items-center gap-1 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-zinc-800 text-neutral-800 dark:text-neutral-200 px-2 py-1 hover:bg-neutral-100 dark:hover:bg-zinc-700" title="{{ __('View full visit summary') }}" wire:navigate>
+                                                        <flux:icon.clipboard-document variant="mini" /> {{ __('Visit Summary') }}
+                                                    </a>
                                                 </td>
                                             </tr>
                                         @endforeach

@@ -644,5 +644,42 @@ class PatientController extends Controller
                 ->withInput();
         }
     }
+
+    // Client: Visit Summary details page for a specific medical record
+    public function visitSummary(MedicalRecord $medicalRecord): View
+    {
+        $user = Auth::user();
+        $guardian = null;
+        $patient = null;
+
+        if ($user) {
+            $guardian = Guardian::where('email', $user->email)->first();
+            $patient = $guardian?->patient;
+        }
+
+        $patient = $patient ?? Patient::query()->first();
+
+        // Authorize access: record must belong to the current patient or user
+        $belongsToPatient = $patient && optional($medicalRecord->appointment)->patient_id === $patient->id;
+        $belongsToUser = $user && $medicalRecord->user_id === $user->id;
+        if (!($belongsToPatient || $belongsToUser)) {
+            abort(403);
+        }
+
+        $medicalRecord->load([
+            'appointment.patient',
+            'appointment.user',
+            'diagnoses',
+            'prescriptions.prescriber',
+        ]);
+
+        $provider = $medicalRecord->appointment?->user ?? $medicalRecord->user;
+
+        return view('client.visit-summary', [
+            'patient' => $patient,
+            'record' => $medicalRecord,
+            'provider' => $provider,
+        ]);
+    }
 }
 

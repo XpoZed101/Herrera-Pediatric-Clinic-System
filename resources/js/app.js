@@ -2,5 +2,4 @@ import './changes';
 import './register';
 import './admin_appointments';
 import './status-updates';
-// Ensure admin dashboard charts initialize on SPA navigations
-import './admin-dashboard';
+// admin-dashboard is now loaded only on the admin dashboard view via @vite

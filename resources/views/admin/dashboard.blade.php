@@ -122,5 +122,7 @@
             </div>
         </div>
     </div>
-
+    
+    @vite('resources/js/dashboard.js')
+    @vite('resources/js/admin-dashboard.js')
 </x-layouts.app>

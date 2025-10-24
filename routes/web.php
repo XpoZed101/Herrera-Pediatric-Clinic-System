@@ -125,7 +125,7 @@ Route::post('/appointments/{appointment}/email', [\App\Http\Controllers\Staff\Ap
     });
 
     // Grouped admin routes
-    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         // Admin dashboard
         Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
         // Charts polling endpoint

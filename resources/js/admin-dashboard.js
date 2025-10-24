@@ -75,7 +75,13 @@
   };
   const stopPolling = () => { if (pollingTimer) { clearInterval(pollingTimer); pollingTimer = null; } };
 
+  const hasAdminCharts = () => {
+    return !!(document.getElementById('statusDoughnut') || document.getElementById('visitTypeDoughnut'));
+  };
+
   const init = () => {
+    // Only run on admin dashboard page where charts exist
+    if (!hasAdminCharts()) { stopPolling(); return; }
     initChartsFromDom();
     startPolling();
   };
@@ -86,6 +92,7 @@
   document.addEventListener('livewire:load', init);
   document.addEventListener('livewire:navigated', init);
   document.addEventListener('visibilitychange', () => {
+    if (!hasAdminCharts()) { stopPolling(); return; }
     if (document.hidden) stopPolling(); else startPolling();
   });
 })();

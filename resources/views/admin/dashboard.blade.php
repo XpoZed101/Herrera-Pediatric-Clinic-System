@@ -122,7 +122,6 @@
             </div>
         </div>
     </div>
-    
-    @vite('resources/js/dashboard.js')
-    @vite('resources/js/admin-dashboard.js')
+
+    {{-- Charts are initialized and live-updated via app.js (admin-dashboard import) --}}
 </x-layouts.app>

@@ -123,5 +123,4 @@
         </div>
     </div>
 
-    @vite('resources/js/dashboard.js')
 </x-layouts.app>

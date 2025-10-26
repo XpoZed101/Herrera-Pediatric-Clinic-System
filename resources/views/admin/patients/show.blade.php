@@ -219,6 +219,20 @@
                     @if($consultation->notes)
                     <div class="text-sm mt-1"><span class="text-neutral-500">Notes:</span> {{ $consultation->notes }}</div>
                     @endif
+
+                    @if($consultation->attachments && $consultation->attachments->count())
+                    <div class="text-sm mt-2">
+                        <span class="text-neutral-500">Documents:</span>
+                        <ul class="mt-1 list-disc list-inside">
+                            @foreach($consultation->attachments as $att)
+                                <li>
+                                    <a href="{{ Storage::disk('public')->url($att->path) }}" target="_blank" class="text-blue-600 hover:underline">{{ $att->filename }}</a>
+                                    <span class="text-neutral-500 text-xs">({{ strtoupper($att->mime) }}, {{ number_format($att->size_bytes / 1024, 1) }} KB)</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
                 </div>
                 @endforeach
             </div>

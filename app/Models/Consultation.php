@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ConsultationAttachment;
 
 class Consultation extends Model
 {
@@ -34,5 +35,10 @@ class Consultation extends Model
     public function appointment()
     {
         return $this->belongsTo(Appointment::class);
+    }
+
+    public function attachments()
+    {
+        return $this->hasMany(ConsultationAttachment::class);
     }
 }

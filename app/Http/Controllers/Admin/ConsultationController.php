@@ -7,9 +7,11 @@ use App\Models\Consultation;
 use App\Models\Patient;
 use App\Models\Prescription;
 use App\Models\VisitType;
+use App\Models\ConsultationAttachment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ConsultationController extends Controller
@@ -56,10 +58,32 @@ class ConsultationController extends Controller
             'plan' => ['nullable', 'string'],
             'prescriptions' => ['nullable', 'string'],
             'notes' => ['nullable', 'string'],
+            'attachments' => ['nullable', 'array'],
+            'attachments.*' => ['file', 'mimes:pdf,jpg,jpeg,png,doc,docx', 'max:10240'],
         ]);
 
         $data['patient_id'] = $patient->id;
-        Consultation::create($data);
+        $consultation = Consultation::create($data);
+
+        // Handle uploaded documents
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $upload) {
+                if (!$upload || !$upload->isValid()) {
+                    continue;
+                }
+
+                $storedPath = $upload->store("consultations/{$consultation->id}", 'public');
+
+                ConsultationAttachment::create([
+                    'consultation_id' => $consultation->id,
+                    'filename' => $upload->getClientOriginalName(),
+                    'path' => $storedPath,
+                    'mime' => $upload->getClientMimeType(),
+                    'size_bytes' => $upload->getSize(),
+                    'uploaded_by' => optional(Auth::user())->id,
+                ]);
+            }
+        }
 
         return redirect()
             ->route('admin.patients.show', $patient)

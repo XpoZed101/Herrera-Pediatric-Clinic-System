@@ -10,20 +10,20 @@
         </div>
 
         <div class="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-zinc-900 p-4 shadow-sm">
-            <form method="POST" action="{{ route('admin.patients.consultations.store', $patient) }}">
+            <form method="POST" action="{{ route('admin.patients.consultations.store', $patient) }}" enctype="multipart/form-data">
                 @csrf
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium mb-1">Conducted At</label>
-                        <input type="datetime-local" name="conducted_at" class="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                        <input type="datetime-local" name="conducted_at" value="{{ now()->format('Y-m-d\\TH:i') }}" class="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">Visit Type</label>
                         <select id="visit_type" name="visit_type" class="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
                             <option value="" disabled @selected(!old('visit_type'))>Select a visit type</option>
                             @foreach($visitTypes as $type)
-                                <option value="{{ $type->slug }}" @selected(old('visit_type') === $type->slug)>{{ $type->name }}</option>
+                                <option value="{{ $type->slug }}" @selected(old('visit_type', 'consultation') === $type->slug)>{{ $type->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -49,11 +49,20 @@
                     <textarea name="plan" rows="3" class="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
                 </div>
 
-                
+                <div class="mt-4">
+                    <label class="block text-sm font-medium mb-1">Prescriptions</label>
+                    <textarea name="prescriptions" rows="3" class="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
 
                 <div class="mt-4">
                     <label class="block text-sm font-medium mb-1">Additional Notes</label>
                     <textarea name="notes" rows="3" class="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+
+                <div class="mt-4">
+                    <label class="block text-sm font-medium mb-1">Upload Documents</label>
+                    <input type="file" name="attachments[]" multiple class="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-zinc-900 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    <p class="text-xs text-neutral-500 mt-1">Accepted: PDF, JPG, PNG, DOC/DOCX. Max 10MB each.</p>
                 </div>
 
                 <div class="mt-6">

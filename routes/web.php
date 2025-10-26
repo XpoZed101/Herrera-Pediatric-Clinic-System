@@ -132,6 +132,9 @@ Route::post('/appointments/{appointment}/email', [\App\Http\Controllers\Staff\Ap
         Route::get('/dashboard/stats', [\App\Http\Controllers\Admin\DashboardController::class, 'stats'])->name('dashboard.stats');
         Route::get('/dashboard/stats', [\App\Http\Controllers\Admin\DashboardController::class, 'stats'])->name('dashboard.stats');
 
+        // Doctor queue view
+        Route::get('/doctor-queue', \App\Livewire\Admin\DoctorQueue::class)->name('doctor.queue');
+
         // Staff management
         Route::get('/staff', [\App\Http\Controllers\Admin\StaffController::class, 'index'])->name('staff.index');
         Route::get('/staff/create', [\App\Http\Controllers\Admin\StaffController::class, 'create'])->name('staff.create');

@@ -36,9 +36,9 @@
                             {{ optional($appt->scheduled_at)->format('H:i') ?? '—' }}
                         </div>
                     </div>
-                
+
                     <div class="text-sm text-neutral-700 dark:text-neutral-300 mb-2">Reason: {{ $appt->reason ?: '—' }}</div>
-                
+
                     <div class="flex flex-wrap items-center gap-2 mb-3">
                         <span class="inline-flex items-center rounded-lg bg-neutral-100 dark:bg-neutral-800 px-2 py-1 text-xs text-neutral-700 dark:text-neutral-300">Queue #{{ $appt->queue_position ?? '—' }}</span>
                         <span class="inline-flex items-center rounded-lg px-2 py-1 text-xs
@@ -46,7 +46,7 @@
                             {{ $appt->checked_in_at ? 'Checked-in' : 'Not checked-in' }}
                         </span>
                     </div>
-                
+
                     <div class="flex items-center gap-2">
                         @if($appt->patient)
                             <a href="{{ route('admin.patients.show', $appt->patient) }}" class="inline-flex items-center gap-2 rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800">Patient</a>
@@ -57,83 +57,14 @@
                         <a href="{{ route('admin.appointments.index') }}" class="inline-flex items-center gap-2 rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800">Appointments</a>
                     </div>
                 </div>
-+                @php
-+                    $statusColor = match($appt->status) {
-+                        'scheduled' => 'bg-sky-100 text-sky-700',
-+                        'completed' => 'bg-emerald-100 text-emerald-700',
-+                        'cancelled' => 'bg-red-100 text-red-700',
-+                        'requested' => 'bg-amber-100 text-amber-700',
-+                        default => 'bg-neutral-100 text-neutral-700',
-+                    };
-+                @endphp
-+                @if ($loop->first)
-+                    </div>
-+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-5 border border-gray-100 dark:border-gray-700">
-+                        <div class="overflow-x-auto">
-+                            <table class="min-w-full text-sm">
-+                                <thead>
-+                                    <tr class="text-left text-neutral-600 dark:text-neutral-300">
-+                                        <th class="px-3 py-2">#</th>
-+                                        <th class="px-3 py-2">{{ __('Patient') }}</th>
-+                                        <th class="px-3 py-2">{{ __('Scheduled') }}</th>
-+                                        <th class="px-3 py-2">{{ __('Status') }}</th>
-+                                        <th class="px-3 py-2">{{ __('Position') }}</th>
-+                                        <th class="px-3 py-2">{{ __('Actions') }}</th>
-+                                    </tr>
-+                                </thead>
-+                                <tbody>
-+                @endif
-+                <tr class="border-t border-neutral-200 dark:border-neutral-700">
-+                    <td class="px-3 py-2">{{ $appt->id }}</td>
-+                    <td class="px-3 py-2">{{ $appt->patient->child_name ?? optional($appt->user)->name ?? '—' }}</td>
-+                    <td class="px-3 py-2">{{ $appt->scheduled_at?->format('Y-m-d H:i') ?? '—' }}</td>
-+                    <td class="px-3 py-2">
-+                        <span class="inline-flex items-center rounded px-2 py-1 {{ $statusColor }}">{{ ucfirst($appt->status) }}</span>
-+                        @if($appt->checked_in_at)
-+                            <span class="ml-2 inline-flex items-center rounded px-2 py-1 bg-emerald-100 text-emerald-700">{{ __('Arrived') }}</span>
-+                        @endif
-+                    </td>
-+                    <td class="px-3 py-2">
-+                        <span class="inline-flex items-center rounded px-2 py-1 bg-neutral-100 text-neutral-700">{{ $appt->queue_position ?? '—' }}</span>
-+                    </td>
-+                    <td class="px-3 py-2">
-+                        <div class="flex items-center gap-2">
-+                            @if($appt->patient)
-+                                <a href="{{ route('admin.patients.show', $appt->patient) }}" class="inline-flex items-center gap-2 rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800" wire:navigate>Patient</a>
-+                                <a href="{{ route('admin.patients.consultations.create', $appt->patient) }}" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 text-white px-3 py-1.5 text-sm hover:bg-blue-700" wire:navigate>Start Consultation</a>
-+                            @else
-+                                <span class="inline-flex items-center gap-2 rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm text-neutral-500">Patient</span>
-+                            @endif
-+                            <a href="{{ route('admin.appointments.index') }}" class="inline-flex items-center gap-2 rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800" wire:navigate>Appointments</a>
-+                        </div>
-+                    </td>
-+                </tr>
-+                @if ($loop->last)
-+                                </tbody>
-+                            </table>
-+                        </div>
-+                        <div class="mt-4">{{ $appointments->links() }}</div>
-+                    </div>
-+                @endif
+
              @empty
-+                </div>
-+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-5 border border-gray-100 dark:border-gray-700">
-+                    <div class="overflow-x-auto">
-+                        <table class="min-w-full text-sm">
-+                            <tbody>
-+                                <tr>
-+                                    <td colspan="6" class="px-3 py-4 text-center text-neutral-600 dark:text-neutral-300">{{ __('No appointments in today’s queue') }}</td>
-+                                </tr>
-+                            </tbody>
-+                        </table>
-+                    </div>
-+                </div>
+                <div class="text-sm text-neutral-600 dark:text-neutral-300">No appointments in today’s queue.</div>
              @endforelse
--        </div>
--
--        <div class="mt-6">
--            {{ $appointments->links() }}
--        </div>
-+        </div>
+        </div>
+
+        <div class="mt-6">
+            {{ $appointments->links() }}
+        </div>
     </div>
 </div>

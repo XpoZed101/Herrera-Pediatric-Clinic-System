@@ -32,13 +32,16 @@ Route::post('/register/step/1', [PatientRegistrationController::class, 'storeSte
 Route::post('/register/step/2', [PatientRegistrationController::class, 'storeStep2'])->name('register.step2.store');
 Route::post('/register/step/3', [PatientRegistrationController::class, 'storeStep3'])->name('register.step3.store');
 Route::post('/register/step/4', [PatientRegistrationController::class, 'storeStep4'])->name('register.step4.store');
+// OTP endpoints for step 1 verification
+Route::post('/register/verify-otp', [PatientRegistrationController::class, 'verifyOtp'])->name('register.verify-otp');
+Route::post('/register/resend-otp', [PatientRegistrationController::class, 'resendOtp'])->name('register.resend-otp');
 
 Route::get('dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->name('dashboard');
 
 Route::post('dashboard/reminders/send', [\App\Http\Controllers\DashboardController::class, 'sendReminders'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->name('dashboard.reminders.send');
 
 Route::middleware(['auth'])->group(function () {

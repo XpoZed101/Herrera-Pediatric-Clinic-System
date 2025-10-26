@@ -20,8 +20,8 @@ class ChildInfoRequest extends FormRequest
             'guardian_name' => ['nullable', 'string', 'max:255'],
             // If provided, must be exactly 11 digits
             'guardian_phone' => ['nullable', 'regex:/^\d{11}$/'],
-            // Require email to create login account
-            'guardian_email' => ['required', 'email', 'max:255'],
+            // Require email to create login account and ensure it's not already registered
+            'guardian_email' => ['required', 'email', 'max:255', 'unique:users,email'],
             // Require password for login account
             'password' => ['required', 'string', 'min:8'],
             // Role defaults to patient; accept only patient

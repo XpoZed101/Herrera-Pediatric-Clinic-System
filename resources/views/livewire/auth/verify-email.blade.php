@@ -25,7 +25,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
     {
         $logout();
 
-        $this->redirect('/', navigate: true);
+        $this->redirect('/', true);
     }
 
     /**
@@ -35,10 +35,10 @@ new #[Layout('components.layouts.auth')] class extends Component {
     {
         if (Auth::user()->hasVerifiedEmail()) {
             $default = ((Auth::user()->role ?? 'patient') === 'admin')
-                ? route('admin.dashboard', absolute: false)
-                : route('client.home', absolute: false);
+                ? route('admin.dashboard', [], false)
+                : route('client.home', [], false);
 
-            $this->redirectIntended(default: $default, navigate: true);
+            $this->redirectIntended($default, true);
 
             return;
         }

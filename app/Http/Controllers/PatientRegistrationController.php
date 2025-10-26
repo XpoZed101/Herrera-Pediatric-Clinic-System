@@ -11,6 +11,10 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\RegistrationOtpMail;
 
 class PatientRegistrationController extends Controller
 {
@@ -50,7 +54,26 @@ class PatientRegistrationController extends Controller
             'phone' => $payload['emergency_phone'] ?? null,
         ];
         Session::put('registration.data', $data);
-        return redirect()->route('register.step.show', ['step' => 2]);
+
+        // Generate and send OTP to guardian email (only if email is unique)
+        try {
+            $otp = (string) random_int(100000, 999999);
+            Session::put('registration.otp', [
+                'code' => $otp,
+                'email' => $payload['guardian_email'],
+                'expires_at' => now()->addMinutes(10)->toIso8601String(),
+            ]);
+            Session::put('registration.otp_pending', true);
+            Session::forget('registration.otp_verified');
+
+            Mail::to($payload['guardian_email'])->send(new RegistrationOtpMail($otp));
+            Session::flash('status', __('A verification code was sent to your email.'));
+        } catch (\Throwable $e) {
+            Session::flash('error', __('Failed to send verification code. Please try again.'));
+        }
+
+        // Stay on step 1 to complete OTP verification before proceeding
+        return redirect()->route('register.step.show', ['step' => 1]);
     }
 
     public function storeStep2(MedicalHistoryRequest $request): RedirectResponse
@@ -107,17 +130,88 @@ class PatientRegistrationController extends Controller
                         'role' => $role,
                     ]
                 );
-                // If user already exists, ensure role is patient (do not overwrite password)
-                if ($user->wasRecentlyCreated === false && $user->role !== $role) {
-                    $user->role = $role;
-                    $user->save();
+
+                // Fire registration event to send verification email for newly created accounts
+                if ($user->wasRecentlyCreated) {
+                    event(new Registered($user));
                 }
+
+                // Log in user
+                Auth::login($user);
+                Session::regenerate();
+                Session::flash('status', 'verification-link-sent');
             }
         } catch (\Throwable $e) {
             // Swallow errors to avoid blocking registration; could be logged
         }
 
         Session::forget('registration.data');
-        return redirect()->route('login')->with('status', 'Registration submitted. Account created. Please log in.');
+        // Redirect to client home instead of email verification page
+        return redirect()->route('client.home')->with('success', __('Registration complete. Welcome!'));
+    }
+
+    /**
+     * Verify the OTP code sent to guardian email.
+     */
+    public function verifyOtp(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'otp_code' => ['required', 'digits:6'],
+        ]);
+
+        $otp = Session::get('registration.otp');
+        if (!$otp || empty($otp['code']) || empty($otp['expires_at'])) {
+            return redirect()->route('register.step.show', ['step' => 1])
+                ->with('error', __('No verification code found. Please resend.'));
+        }
+
+        $expired = now()->gt(\Illuminate\Support\Carbon::parse($otp['expires_at']));
+        if ($expired) {
+            return redirect()->route('register.step.show', ['step' => 1])
+                ->withErrors(['otp_code' => __('Code has expired. Please resend a new code.')]);
+        }
+
+        if ($validated['otp_code'] !== $otp['code']) {
+            return redirect()->route('register.step.show', ['step' => 1])
+                ->withErrors(['otp_code' => __('Invalid code. Please try again.')]);
+        }
+
+        // Mark OTP as verified and allow proceeding
+        Session::put('registration.otp_verified', true);
+        Session::forget('registration.otp_pending');
+
+        return redirect()->route('register.step.show', ['step' => 2])
+            ->with('success', __('Email verified. Continue registration.'));
+    }
+
+    /**
+     * Resend a new OTP code.
+     */
+    public function resendOtp(Request $request): RedirectResponse
+    {
+        $data = Session::get('registration.data', []);
+        $email = $data['auth']['email'] ?? $data['guardian']['email'] ?? null;
+        if (!$email) {
+            return redirect()->route('register.step.show', ['step' => 1])
+                ->with('error', __('No email to send code to. Please re-enter details.'));
+        }
+
+        try {
+            $otp = (string) random_int(100000, 999999);
+            Session::put('registration.otp', [
+                'code' => $otp,
+                'email' => $email,
+                'expires_at' => now()->addMinutes(10)->toIso8601String(),
+            ]);
+            Session::put('registration.otp_pending', true);
+            Session::forget('registration.otp_verified');
+
+            Mail::to($email)->send(new RegistrationOtpMail($otp));
+            return redirect()->route('register.step.show', ['step' => 1])
+                ->with('status', __('A new verification code was sent.'));
+        } catch (\Throwable $e) {
+            return redirect()->route('register.step.show', ['step' => 1])
+                ->with('error', __('Failed to resend code. Please try again.'));
+        }
     }
 }

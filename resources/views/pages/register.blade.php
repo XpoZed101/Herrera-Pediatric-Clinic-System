@@ -24,7 +24,7 @@
             <form method="POST" action="{{ route('register.step1.store') }}" class="grid grid-cols-1 gap-4 md:grid-cols-2">
                 @csrf
                 <div class="md:col-span-2">
-                    <h2 class="text-base font-medium text-gray-900 dark:text-white">Child Information</h2>
+                    <h2 class="text.base font-medium text-gray-900 dark:text-white">Child Information</h2>
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Full Name</label>
@@ -60,13 +60,23 @@
                 <div class="md:col-span-2">
                     <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Email</label>
                     <input name="guardian_email" type="email" class="{{ $inputBase }}" value="{{ old('guardian_email', $data['guardian']['email'] ?? '') }}" />
+                    @error('guardian_email')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
 
+                {{-- Password field: show input before OTP; show saved indicator while pending --}}
+                @if (session('registration.otp_pending') && !session('registration.otp_verified'))
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Account Password</label>
+                    <input type="password" class="{{ $inputBase }} opacity-50" value="••••••••" disabled />
+                    <p class="mt-1 text-xs text-gray-500">Password saved. Verify your code to continue.</p>
+                </div>
+                @else
                 <div class="md:col-span-2">
                     <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Account Password</label>
                     <input name="password" type="password" required class="{{ $inputBase }}" placeholder="Enter a password to create account" />
                     @error('password')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
+                @endif
                 <input type="hidden" name="role" value="patient" />
 
                 <div class="md:col-span-2">
@@ -82,10 +92,36 @@
                     @error('emergency_phone')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
                 <div class="md:col-span-2"></div>
+
+                {{-- Continue button: disable/hide while OTP is pending --}}
+                @if (!(session('registration.otp_pending') && !session('registration.otp_verified')))
                 <div class="md:col-span-2 flex justify-end mt-2">
                     <button type="submit" class="{{ $btnPrimary }}">Continue</button>
                 </div>
+                @else
+                <div class="md:col-span-2 flex justify-end mt-2">
+                    <button type="button" class="{{ $btnPrimary }} opacity-50 cursor-not-allowed" disabled title="Verify code to continue">Verify code to continue</button>
+                </div>
+                @endif
             </form>
+
+            {{-- OTP verification section --}}
+            @if (session('registration.otp_pending') && !session('registration.otp_verified'))
+            <div class="mt-6 rounded-lg border border-accent/40 bg-accent-foreground p-4">
+                <h3 class="text-sm font-medium text-gray-900 dark:text-white">Verify your email</h3>
+                <p class="mt-1 text-xs text-gray-700 dark:text-gray-300">We sent a 6-digit code to <span class="font-semibold">{{ $data['guardian']['email'] ?? $data['auth']['email'] ?? 'your email' }}</span>. Enter it below to continue.</p>
+
+                <form method="POST" action="{{ route('register.verify-otp') }}" class="mt-3">
+                    @csrf
+                    <x-input-otp name="otp_code" digits="6" />
+                    @error('otp_code')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
+                    <div class="mt-3 flex items-center gap-3">
+                        <button type="submit" class="{{ $btnPrimary }}">Verify</button>
+                        <button type="submit" formaction="{{ route('register.resend-otp') }}" formmethod="POST" class="{{ $btnSecondary }}">Resend code</button>
+                    </div>
+                </form>
+            </div>
+            @endif
             @elseif ($step === 2)
             <form method="POST" action="{{ route('register.step2.store') }}" class="grid grid-cols-1 gap-4 md:grid-cols-2">
                 @csrf
@@ -105,7 +141,7 @@
                     <div class="mt-2 grid grid-cols-2 gap-2">
                         @php $conds = ['asthma','ear_infections','eczema','seizures','heart_problems','adhd','autism','diabetes','developmental_delays','other']; @endphp
                         @foreach ($conds as $c)
-                        <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                        <label class="flex items-center gap-2 text.sm text-gray-700 dark:text-gray-300">
                             <input type="checkbox" name="past_conditions[]" value="{{ $c }}" @checked(in_array($c, $data['medical']['past_conditions'] ?? [])) />
                             <span>{{ str_replace('_',' ', ucfirst($c)) }}</span>
                         </label>
@@ -116,7 +152,7 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Immunizations</label>
                     <div class="mt-2 flex gap-4 text-sm">
                         @foreach (['yes'=>'Up to date','no'=>'Not up to date','not_sure'=>'Not sure'] as $val => $text)
-                        <label class="flex items-center gap-2">
+                        <label class="flex items.center gap-2">
                             <input type="radio" name="immunizations_status" value="{{ $val }}" @checked(($data['medical']['immunizations_status'] ?? '' )===$val) />
                             <span class="text-gray-700 dark:text-gray-300">{{ $text }}</span>
                         </label>
@@ -156,13 +192,13 @@
                 </div>
             </form>
             @elseif ($step === 4)
-            <form method="POST" action="{{ route('register.step4.store') }}" class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <form method="POST" action="{{ route('register.step4.store') }}" class="grid grid.cols-1 gap-4 md:grid-cols-2">
                 @csrf
                 <div class="md:col-span-2">
                     <h2 class="text-base font-medium text-gray-900 dark:text-white">Current Symptoms</h2>
                 </div>
                 <div class="md:col-span-2">
-                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Symptoms</label>
+                    <label class="block text-xs font-medium text.gray-700 dark:text-gray-300">Symptoms</label>
                     @php $symptoms = ['fever','cough','rash','ear_pain','stomach_pain','diarrhea','vomiting','headaches','trouble_breathing','other']; @endphp
                     <div class="mt-2 grid grid-cols-2 gap-2">
                         @foreach ($symptoms as $s)

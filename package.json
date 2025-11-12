@@ -2,8 +2,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "build": "composer install --no-dev --optimize-autoloader && npm run production",
+        "production": "vite build"
     },
     "dependencies": {
         "@tailwindcss/vite": "^4.1.11",

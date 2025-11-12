@@ -114,7 +114,7 @@
     </section>
 
     <!-- Clinic Rules & Policies -->
-    @php($policy = \App\Models\ClinicPolicy::query()->first())
+   <!-- @php($policy = \App\Models\ClinicPolicy::query()->first()) -->
     <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         <div class="mb-10 text-center">
             <div class="inline-flex items-center gap-2 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 px-3 py-1 text-xs">

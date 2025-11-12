@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/lambda.php",
+      "src": "api/index.php",
       "use": "vercel-php@0.7.4",
       "config": {
         "maxLambdaSize": "250mb",
@@ -14,7 +14,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "api/lambda.php"
+      "dest": "api/index.php"
     }
   ]
 }

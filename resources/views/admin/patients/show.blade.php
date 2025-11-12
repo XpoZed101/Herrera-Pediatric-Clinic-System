@@ -168,16 +168,6 @@
                 </div>
             </div>
 
-            <div class="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-zinc-900 shadow-sm p-5">
-                <h2 class="text-base font-medium mb-3">Current Symptoms</h2>
-                <div class="text-sm space-y-1">
-                    @forelse($patient->currentSymptoms as $s)
-                    <div>• {{ $s->symptom_type }} @if($s->other_name) ({{ $s->other_name }}) @endif @if(!empty($s->details)) — {{ $s->details }}@endif</div>
-                    @empty
-                    @endforelse
-                </div>
-            </div>
-
             <div class="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-zinc-900 shadow-sm p-5 lg:col-span-2">
                 <h2 class="text-base font-medium mb-3">Additional Notes</h2>
                 <div class="text-sm">

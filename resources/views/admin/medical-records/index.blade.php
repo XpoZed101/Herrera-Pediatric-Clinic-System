@@ -19,7 +19,7 @@
                         <tr>
                             <th class="px-3 py-2 text-left">Conducted</th>
                             <th class="px-3 py-2 text-left">Prescriptions</th>
-                            <th class="px-3 py-2 text-left">User</th>
+                            <th class="px-3 py-2 text-left">Patient</th>
                             <th class="px-3 py-2 text-left">Appointment</th>
                             <th class="px-3 py-2 text-left">Actions</th>
                         </tr>
@@ -34,16 +34,9 @@
                                     </a>
                                 </td>
                                 <td class="px-3 py-2">
-                                    @if($record->user)
-                                        <div class="text-neutral-900 dark:text-neutral-100">
-                                            {{ $record->user->name ?? '—' }}
-                                        </div>
-                                        <div class="text-xs text-neutral-600 dark:text-neutral-300">
-                                            ID: {{ $record->user->id ?? '—' }} • Email: {{ $record->user->email ?? '—' }} • Phone: {{ $record->user->phone ?? '—' }}
-                                        </div>
-                                    @else
-                                        <span class="text-neutral-500">Unknown</span>
-                                    @endif
+                                    <div class="text-neutral-900 dark:text-neutral-100">
+                                        {{ optional($record->appointment->patient)->child_name ?? 'Unknown Patient' }}
+                                    </div>
                                 </td>
                                 <td class="px-3 py-2">
                                     @if($record->appointment)

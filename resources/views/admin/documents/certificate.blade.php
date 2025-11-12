@@ -52,15 +52,20 @@
     </div>
 
     <div class="title">Medical Certificate</div>
+    @php
+        $issuedDateCode = optional($record->conducted_at)->format('Ymd') ?? 'N/A';
+        $docId = strtoupper(substr(md5((($record->id ?? 0) . '|' . $issuedDateCode)), 0, 10));
+        $patientName = optional($record->appointment->patient)->child_name ?? optional($record->appointment->user)->name ?? '—';
+    @endphp
     <div class="chips">
         <div class="chip"><span class="dot"></span> Issued: <strong>{{ now()->format('Y-m-d') }}</strong></div>
-        <div class="chip"><span class="dot"></span> Document ID: <strong>{{ strtoupper(substr(md5(($record->id ?? 0).'|'.(optional($record->conducted_at)->format('Ymd') ?? 'N/A')), 0, 10)) }}</strong></div>
-        <div class="chip"><span class="dot" style="background:#34d399"></span> Patient: <strong>{{ optional($record->appointment->user)->name ?? '—' }}</strong></div>
+        <div class="chip"><span class="dot"></span> Document ID: <strong>{{ $docId }}</strong></div>
+        <div class="chip"><span class="dot" style="background:#34d399"></span> Patient: <strong>{{ $patientName }}</strong></div>
     </div>
 
     <div class="section">
         <h4>Summary</h4>
-        <p class="muted" style="margin:0 0 10px;">This certifies that <strong>{{ optional($record->appointment->user)->name ?? '—' }}</strong> was examined at our clinic on <strong>{{ optional($record->conducted_at)->format('Y-m-d') ?? optional($record->appointment->scheduled_at)->format('Y-m-d') ?? now()->format('Y-m-d') }}</strong>.</p>
+        <p class="muted" style="margin:0 0 10px;">This certifies that <strong>{{ $patientName }}</strong> was examined at our clinic on <strong>{{ optional($record->conducted_at)->format('Y-m-d') ?? optional($record->appointment->scheduled_at)->format('Y-m-d') ?? now()->format('Y-m-d') }}</strong>.</p>
         @if($record->chief_complaint)
             <p style="margin:0 0 8px;">Chief Complaint: {{ $record->chief_complaint }}</p>
         @endif

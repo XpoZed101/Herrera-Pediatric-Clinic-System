@@ -49,7 +49,7 @@
                                 </td>
                                 <td class="px-3 py-2 capitalize">{{ $p->type }}</td>
                                 <td class="px-3 py-2">{{ optional($p->prescriber)->name ?? '—' }}</td>
-                                <td class="px-3 py-2">{{ optional(optional($p->medicalRecord->appointment)->user)->name ?? '—' }}</td>
+                                <td class="px-3 py-2">{{ optional(optional($p->medicalRecord->appointment)->patient)->child_name ?? 'Unknown Patient' }}</td>
                                 <td class="px-3 py-2">#{{ optional($p->medicalRecord)->id }}</td>
                                 <td class="px-3 py-2">
                                     @php $status = $p->status ?? 'active'; @endphp

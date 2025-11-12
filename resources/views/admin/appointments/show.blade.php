@@ -39,7 +39,7 @@
                         </div>
                     </div>
                     <div><span class="text-neutral-500 text-sm">Patient</span>
-                        <div class="font-medium">{{ optional($appointment->patient)->name ?? '—' }}</div>
+                        <div class="font-medium">{{ optional($appointment->patient)->child_name ?? 'Unknown Patient' }}</div>
                     </div>
                     <div>
                         <span class="text-neutral-500 text-sm">Status</span>

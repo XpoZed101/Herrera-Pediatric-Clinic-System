@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\User;
-use App\Models\ClinicPolicy;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
@@ -10,10 +9,7 @@ use Livewire\Volt\Component;
 new class extends Component {
     public string $name = '';
     public string $email = '';
-    // Clinic policies (admin-only)
-    public ?string $cancellation_policy = null;
-    public ?string $privacy_rules = null;
-    public ?string $staff_workflows = null;
+    // (profile fields only)
 
     /**
      * Mount the component.
@@ -23,15 +19,7 @@ new class extends Component {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
 
-        // Load clinic policies if admin
-        if ((Auth::user()->role ?? null) === 'admin') {
-            $policy = ClinicPolicy::query()->first();
-            if ($policy) {
-                $this->cancellation_policy = $policy->cancellation_policy;
-                $this->privacy_rules = $policy->privacy_rules;
-                $this->staff_workflows = $policy->staff_workflows;
-            }
-        }
+
     }
 
     /**
@@ -66,23 +54,8 @@ new class extends Component {
     }
 
     /**
-     * Update clinic policies (admin-only)
+     * (Clinic policies are managed by the dedicated Clinic Rules component.)
      */
-    public function updateClinicPolicies(): void
-    {
-        abort_unless((Auth::user()->role ?? null) === 'admin', 403);
-
-        $validated = $this->validate([
-            'cancellation_policy' => ['nullable', 'string'],
-            'privacy_rules' => ['nullable', 'string'],
-            'staff_workflows' => ['nullable', 'string'],
-        ]);
-
-        $policy = ClinicPolicy::query()->firstOrCreate([]);
-        $policy->fill($validated)->save();
-
-        $this->dispatch('clinic-policies-updated');
-    }
 
     /**
      * Send an email verification notification to the current user.
@@ -145,46 +118,7 @@ new class extends Component {
             </div>
         </form>
 
-        @if ((auth()->user()->role ?? null) === 'admin')
-            <flux:separator class="my-8" />
-
-            <x-settings.layout :heading="__('Clinic Policies')" :subheading="__('Establish or update clinic operating rules')">
-                <form wire:submit="updateClinicPolicies" class="my-6 w-full space-y-6">
-                    <flux:textarea
-                        wire:model.defer="cancellation_policy"
-                        :label="__('Appointment cancellation or rescheduling policies')"
-                        rows="5"
-                        placeholder="Define notice periods, rescheduling rules, and fees if any."
-                    />
-
-                    <flux:textarea
-                        wire:model.defer="privacy_rules"
-                        :label="__('Patient data privacy rules')"
-                        rows="5"
-                        placeholder="Outline data handling, access controls, and consent procedures."
-                    />
-
-                    <flux:textarea
-                        wire:model.defer="staff_workflows"
-                        :label="__('Staff workflows and responsibilities')"
-                        rows="5"
-                        placeholder="Describe standard operating procedures and role responsibilities."
-                    />
-
-                    <div class="flex items-center gap-4">
-                        <div class="flex items-center justify-end">
-                            <flux:button variant="primary" type="submit" class="w-full">
-                                {{ __('Save Policies') }}
-                            </flux:button>
-                        </div>
-
-                        <x-action-message class="me-3" on="clinic-policies-updated">
-                            {{ __('Policies saved.') }}
-                        </x-action-message>
-                    </div>
-                </form>
-            </x-settings.layout>
-        @endif
+        {{-- Clinic Policies are managed on the Clinic Rules tab --}}
 
         <livewire:settings.delete-user-form />
     </x-settings.layout>

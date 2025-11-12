@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Appointment\StoreAppointmentRequest;
 use App\Repositories\AppointmentRepository;
 use App\Models\Appointment;
+use App\Models\Guardian;
 use App\Models\VisitType;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -84,6 +85,16 @@ class AppointmentController extends Controller
         unset($payload['scheduled_date'], $payload['scheduled_time']);
         // Use Auth facade to satisfy static analysis for union type of auth()
         $payload['user_id'] = Auth::id();
+
+        // If patient_id not provided, attempt to resolve a patient using the
+        // logged-in guardian's email (common when guardians register first).
+        // This keeps existing behavior when patient_id is explicitly supplied.
+        if (empty($payload['patient_id']) && Auth::check()) {
+            $guardian = Guardian::where('email', Auth::user()->email)->first();
+            if ($guardian) {
+                $payload['patient_id'] = $guardian->patient_id;
+            }
+        }
 
         // Block creating a new appointment if any existing is not completed
         if ($this->repository->hasNotCompletedForUser($payload['user_id'])) {

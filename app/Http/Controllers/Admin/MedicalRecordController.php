@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\MedicalRecord;
 use App\Models\Diagnosis;
+use App\Models\Guardian;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +19,7 @@ class MedicalRecordController extends Controller
     {
         abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'admin', 403);
 
-        $records = MedicalRecord::with(['user', 'appointment'])
+        $records = MedicalRecord::with(['user', 'appointment.patient'])
             ->withCount('prescriptions')
             ->latest('conducted_at')
             ->paginate(15);
@@ -83,7 +84,7 @@ class MedicalRecordController extends Controller
     {
         abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'admin', 403);
 
-        $medicalRecord->load(['appointment.user', 'diagnoses']);
+        $medicalRecord->load(['appointment.user', 'appointment.patient', 'diagnoses']);
         return view('admin.medical-records.edit', [
             'medicalRecord' => $medicalRecord,
             'appointment' => $medicalRecord->appointment,
@@ -95,10 +96,20 @@ class MedicalRecordController extends Controller
     {
         abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'admin', 403);
 
-        $medicalRecord->load(['appointment.user', 'diagnoses', 'prescriptions']);
+        $medicalRecord->load(['appointment.user', 'appointment.patient', 'diagnoses', 'prescriptions']);
+
+        // If appointment has no patient relation (legacy data), try to resolve via guardian email
+        $appointment = $medicalRecord->appointment;
+        if ($appointment && empty($appointment->patient)) {
+            $guardian = Guardian::where('email', optional($medicalRecord->user)->email)->with('patient')->first();
+            if ($guardian && $guardian->patient) {
+                $appointment->setRelation('patient', $guardian->patient);
+            }
+        }
+
         return view('admin.medical-records.show', [
             'medicalRecord' => $medicalRecord,
-            'appointment' => $medicalRecord->appointment,
+            'appointment' => $appointment,
             'user' => $medicalRecord->user,
         ]);
     }
@@ -190,8 +201,13 @@ class MedicalRecordController extends Controller
     {
         abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'admin', 403);
 
+        $medicalRecord->load(['appointment.user', 'appointment.patient']);
+        // Issuer is the currently authenticated admin/doctor, not the guardian
+        $issuer = Auth::user();
+
         $pdf = Pdf::loadView('admin.documents.certificate', [
-            'record' => $medicalRecord->load(['appointment.user']),
+            'record' => $medicalRecord,
+            'issuer' => $issuer,
             'appName' => 'Pediatric Clinic',
         ])->setPaper('a4');
 
@@ -205,8 +221,13 @@ class MedicalRecordController extends Controller
     {
         abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'admin', 403);
 
+        $medicalRecord->load(['appointment.user', 'appointment.patient']);
+        // Issuer is the currently authenticated admin/doctor, not the guardian
+        $issuer = Auth::user();
+
         $pdf = Pdf::loadView('admin.documents.clearance', [
-            'record' => $medicalRecord->load(['appointment.user']),
+            'record' => $medicalRecord,
+            'issuer' => $issuer,
             'appName' => 'Pediatric Clinic',
         ])->setPaper('a4');
 

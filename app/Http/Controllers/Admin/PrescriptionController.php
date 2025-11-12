@@ -19,7 +19,7 @@ class PrescriptionController extends Controller
     {
         abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'admin', 403);
 
-        $prescriptions = Prescription::with(['medicalRecord.appointment.user', 'prescriber'])
+        $prescriptions = Prescription::with(['medicalRecord.appointment.user', 'medicalRecord.appointment.patient', 'prescriber'])
             ->latest('created_at')
             ->paginate(15);
 
@@ -29,7 +29,7 @@ class PrescriptionController extends Controller
     public function create(): \Illuminate\View\View
     {
         abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'admin', 403);
-        $records = MedicalRecord::with(['appointment.user', 'user'])->latest('created_at')->limit(50)->get();
+    $records = MedicalRecord::with(['appointment.user', 'appointment.patient', 'user'])->latest('created_at')->limit(50)->get();
 
         return view('admin.prescriptions.create', compact('records'));
     }
@@ -37,7 +37,7 @@ class PrescriptionController extends Controller
     public function edit(Prescription $prescription): \Illuminate\View\View
     {
         abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'admin', 403);
-        $records = MedicalRecord::with(['appointment.user', 'user'])->latest('created_at')->limit(50)->get();
+    $records = MedicalRecord::with(['appointment.user', 'appointment.patient', 'user'])->latest('created_at')->limit(50)->get();
         return view('admin.prescriptions.edit', compact('prescription', 'records'));
     }
 
@@ -203,7 +203,7 @@ class PrescriptionController extends Controller
         abort_unless(Auth::check() && (Auth::user()->role ?? null) === 'admin', 403);
 
         $pdf = Pdf::loadView('admin.prescriptions.pdf', [
-            'prescription' => $prescription->load(['medicalRecord.appointment.user', 'prescriber']),
+            'prescription' => $prescription->load(['medicalRecord.appointment.user', 'medicalRecord.appointment.patient', 'prescriber']),
             'appName' => config('app.name'),
         ])->setPaper('a4');
 

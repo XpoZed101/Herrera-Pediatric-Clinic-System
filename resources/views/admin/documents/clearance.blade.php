@@ -48,16 +48,21 @@
     </div>
 
     <div class="title">Medical Clearance</div>
+    @php
+        $issuedDateCode = optional($record->conducted_at)->format('Ymd') ?? 'N/A';
+        $docId = strtoupper(substr(md5((($record->id ?? 0) . '|' . $issuedDateCode)), 0, 10));
+        $patientName = optional($record->appointment->patient)->child_name ?? optional($record->appointment->user)->name ?? '—';
+    @endphp
     <div class="chips">
         <div class="chip"><span class="dot"></span> Issued: <strong>{{ now()->format('Y-m-d') }}</strong></div>
-        <div class="chip"><span class="dot"></span> Document ID: <strong>{{ strtoupper(substr(md5(($record->id ?? 0).'|'.(optional($record->conducted_at)->format('Ymd') ?? 'N/A')), 0, 10)) }}</strong></div>
-        <div class="chip"><span class="dot" style="background:#34d399"></span> Patient: <strong>{{ optional($record->appointment->user)->name ?? '—' }}</strong></div>
+        <div class="chip"><span class="dot"></span> Document ID: <strong>{{ $docId }}</strong></div>
+        <div class="chip"><span class="dot" style="background:#34d399"></span> Patient: <strong>{{ $patientName }}</strong></div>
     </div>
 
     <div class="section">
         <h4>Fitness Declaration</h4>
         <p style="margin:0 0 10px; line-height:1.65;">
-            After clinical evaluation, <strong>{{ optional($record->appointment->user)->name ?? '—' }}</strong> is deemed
+            After clinical evaluation, <strong>{{ $patientName }}</strong> is deemed
             <strong>medically fit</strong> for participation in school activities, sports, travel,
             or employment as of <strong>{{ now()->format('Y-m-d') }}</strong>.
         </p>
@@ -77,7 +82,7 @@
                 <div class="muted">Valid for 6 months from issue date, unless health status changes.</div>
             </div>
         </div>
-        <div class="verify">For verification, present this document with valid ID. Code: <strong>{{ strtoupper(substr(md5(($record->id ?? 0).'|'.(optional($record->conducted_at)->format('Ymd') ?? 'N/A')), 0, 10)) }}</strong></div>
+        <div class="verify">For verification, present this document with valid ID. Code: <strong>{{ $docId }}</strong></div>
     </div>
 
     <div class="signature-block">

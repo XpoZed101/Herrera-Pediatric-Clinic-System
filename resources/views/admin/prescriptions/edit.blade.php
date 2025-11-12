@@ -25,7 +25,7 @@
                             <option value="">Select a record...</option>
                             @foreach($records as $record)
                                 <option value="{{ $record->id }}" @selected(old('medical_record_id', $prescription->medical_record_id) == $record->id)>
-                                    #{{ $record->id }} — {{ optional(optional($record->appointment)->user)->name ?? optional($record->user)->name ?? 'Unknown user' }}
+                                    #{{ $record->id }} — {{ optional(optional($record->appointment)->patient)->child_name ?? 'Unknown Patient' }}
                                 </option>
                             @endforeach
                         </select>

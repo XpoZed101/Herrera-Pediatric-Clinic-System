@@ -34,7 +34,7 @@
     </div>
 
     <div class="row" style="margin-top: 12px;">
-        <div>Patient Name: <strong>{{ optional(optional($prescription->medicalRecord->appointment)->user)->name ?? '—' }}</strong></div>
+        <div>Patient Name: <strong>{{ optional(optional($prescription->medicalRecord->appointment)->patient)->child_name ?? 'Unknown Patient' }}</strong></div>
         <div>Date: <strong>{{ now()->format('Y-m-d') }}</strong></div>
     </div>
 

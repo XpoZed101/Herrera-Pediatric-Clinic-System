@@ -5,7 +5,7 @@
             <div class="flex items-center justify-between px-4 py-3">
                 <div>
                     <h2 class="text-xl font-semibold tracking-tight">Medical Record for Appointment #{{ $appointment->id }}</h2>
-                    <div class="mt-1 text-sm text-neutral-600 dark:text-neutral-300">Patient: {{ $user->name ?? '—' }}</div>
+                    <div class="mt-1 text-sm text-neutral-600 dark:text-neutral-300">Patient: {{ optional($appointment->patient)->child_name ?? 'Unknown Patient' }}</div>
                 </div>
                 <div class="flex items-center gap-2">
                     <a href="{{ route('admin.appointments.show', $appointment) }}" class="inline-flex items-center gap-2 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-zinc-800 text-neutral-800 dark:text-neutral-200 px-3 py-1.5 hover:bg-neutral-100 dark:hover:bg-zinc-700" wire:navigate>

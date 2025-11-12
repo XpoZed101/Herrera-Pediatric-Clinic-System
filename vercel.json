@@ -6,8 +6,7 @@
       "use": "vercel-php@0.7.4",
       "config": {
         "maxLambdaSize": "250mb",
-        "runtime": "vercel-php@0.7.4",
-        "buildCommand": "npm run vercel-build"
+        "runtime": "vercel-php@0.7.4"
       }
     }
   ],

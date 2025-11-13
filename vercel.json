@@ -10,13 +10,11 @@
       }
     }
   ],
-  "rewrites": [
-        { "source": "/(.*)", "destination": "/api/index.php" }
-      ],
   "routes": [
     {
       "src": "/(.*)",
       "dest": "api/index.php"
     }
-  ]
+  ],
+  "buildcommand": "echo skip..."
 }

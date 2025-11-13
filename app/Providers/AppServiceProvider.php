@@ -17,15 +17,6 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(PrescriptionRepositoryInterface::class, EloquentPrescriptionRepository::class);
         $this->app->bind(PaymentProviderInterface::class, PaymongoCheckoutProvider::class);
-
-        // 🛑 FIX FOR VERCEL ASSET PATHS 🛑
-        // This ensures the asset() and @vite() helpers correctly resolve the public folder
-        // when deployed to Vercel's serverless environment.
-        if (isset($_SERVER['SERVER_NAME'])) {
-            $this->app->bind('path.public', function () {
-                return base_path('public');
-            });
-        }
     }
 
     /**

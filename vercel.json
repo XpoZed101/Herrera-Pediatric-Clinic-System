@@ -11,7 +11,7 @@
     }
   ],
   "rewrites": [
-        { "source": "/(.*)", "destination": "/public/index.php" }
+        { "source": "/(.*)", "destination": "/api/index.php" }
       ],
   "routes": [
     {

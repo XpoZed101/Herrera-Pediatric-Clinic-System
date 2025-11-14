@@ -9,5 +9,5 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
 
-@vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/alerts.js'])
+@vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/alerts.js'], 'assets')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

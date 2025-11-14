@@ -30,7 +30,7 @@
         @endif
         <p class="p">To proceed, please reply to this email or call our front desk so we can finalize a suitable time and visit type.</p>
         <p class="p muted">If you’ve already scheduled, please disregard this message.</p>
-        <p class="p">Warm regards,<br/>Pediatric Clinic Team</p>
+        <p class="p">Warm regards,<br/>Herrera Pediatric Clinic Team</p>
         <div class="foot">This message was sent automatically in response to your waitlist status change to "invited".</div>
     </div>
 </div>

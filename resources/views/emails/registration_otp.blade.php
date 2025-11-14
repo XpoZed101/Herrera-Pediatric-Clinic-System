@@ -18,7 +18,7 @@
         <p class="code">{{ $code }}</p>
         <p class="muted">This code will expire in {{ $ttlMinutes }} minutes.</p>
         <p>If you didn't request this code, you can ignore this email.</p>
-        <p style="margin-top:24px;" class="muted">Pediatric Clinic</p>
+        <p style="margin-top:24px;" class="muted">Herrera Pediatric Clinic</p>
     </div>
 </body>
 </html>

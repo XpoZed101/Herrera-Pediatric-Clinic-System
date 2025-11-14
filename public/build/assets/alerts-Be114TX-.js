@@ -1,1 +1,0 @@
-document.addEventListener("DOMContentLoaded",()=>{const e=document.getElementById("flash-status");if(!e)return;const n=e.dataset.message||"",t=()=>{window.Swal&&typeof window.Swal.fire=="function"?window.Swal.fire({title:"Registration Submitted",text:n,icon:"success",confirmButtonText:"OK"}):setTimeout(t,50)};t()});

@@ -12,7 +12,18 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "handle": "filesystem"
+    },
+    {
+      "src": "\\/assets\\/(.*)",
+      "dest": "public/assets/$1"
+    },
+    {
+      "src": "\\/favicon\\.(ico|svg|png)",
+      "dest": "public/$0"
+    },
+    {
+      "src": "\\/(.*)",
       "dest": "api/index.php"
     }
   ]
